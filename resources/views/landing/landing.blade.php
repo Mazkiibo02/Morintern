@@ -5,26 +5,17 @@
     <!-- Include all components -->
     @include('landing.components.header')
     
-    <main>
+    <main class="pt-16">
         @include('landing.components.hero')
         @include('landing.components.features')
         @include('landing.components.jobs')
-        @include('landing.components.footer')
-    </main>
-</div>
-@endsection
-
-        @include('landing.components.hero')
-
-        @include('landing.components.features')
-
+        
         <!-- CTA -->
         <section id="get-started" class="mt-16 text-center">
             <a href="{{ route('register') }}" class="inline-block bg-[#678DE5] text-white px-8 py-3 rounded-md font-semibold">Mulai Sekarang</a>
         </section>
-
+        
         @include('landing.components.footer')
-    </div>
-
+    </main>
 </div>
 @endsection
