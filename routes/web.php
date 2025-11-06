@@ -1,5 +1,3 @@
-#MzKiibo
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -41,6 +39,14 @@ Route::middleware(\App\Http\Middleware\AuthAny::class)->group(function () {
     Route::put('password', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])
         ->name('password.update');
 });
+
+// HRD Dashboard Routes
+Route::prefix('hrd')->middleware('auth:web')->name('hrd.')->group(function () {
+    Route::get('/calon', [App\Http\Controllers\Hrd\PesertaController::class, 'index'])->name('peserta.index');
+    Route::post('/calon/{id}/approve', [App\Http\Controllers\Hrd\PesertaController::class, 'approve'])->name('peserta.approve');
+    Route::post('/calon/{id}/reject', [App\Http\Controllers\Hrd\PesertaController::class, 'reject'])->name('peserta.reject');
+});
+
 
 
 //  LOGIN DENGAN GOOGLE (HRD / USER UTAMA)
