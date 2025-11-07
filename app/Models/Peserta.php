@@ -20,7 +20,7 @@ class Peserta extends Authenticatable
         'password',
         'google_id',
         'no_telp',
-        'ketua_id',
+        // 'ketua_id',
         'konten_id',
         'perusahaan_id',
         'tanggal_daftar',
