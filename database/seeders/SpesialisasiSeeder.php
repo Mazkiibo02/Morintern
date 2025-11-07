@@ -7,15 +7,19 @@ use Illuminate\Support\Facades\DB;
 
 class SpesialisasiSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         DB::table('spesialisasi')->truncate();
 
         DB::table('spesialisasi')->insert([
-            ['id' => 1, 'nama_spesialisasi' => 'Back End', 'deskripsi' => 'Backend Development'],
-            ['id' => 2, 'nama_spesialisasi' => 'Front End', 'deskripsi' => 'Frontend Development'],
-            ['id' => 3, 'nama_spesialisasi' => 'System Analyst', 'deskripsi' => 'System Analysis'],
-            ['id' => 4, 'nama_spesialisasi' => 'Quality Assurance', 'deskripsi' => 'QA Testing'],
+            ['nama_spesialisasi' => 'Back End'],
+            ['nama_spesialisasi' => 'Front End'],
+            ['nama_spesialisasi' => 'System Analyst'],
+            ['nama_spesialisasi' => 'Quality Assurance'],
         ]);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
