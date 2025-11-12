@@ -9,7 +9,7 @@ class Spesialisasi extends Model
 {
     use HasFactory;
 
-    // Explicitly define table name to prevent Laravel from pluralizing to 'spesialisasis'
+    // ✅ Pastikan Laravel tidak mengubah menjadi 'spesialisasis'
     protected $table = 'spesialisasi';
 
     protected $fillable = [
