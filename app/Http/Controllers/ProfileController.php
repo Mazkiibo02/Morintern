@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Peserta;
+use App\Models\PesertaCalon;
+use App\Models\Spesialisasi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -24,16 +25,11 @@ class ProfileController extends Controller
         // Get anggota if user is peserta (ketua)
         $anggota = [];
         if (Auth::guard('peserta')->check()) {
-            $anggota = Peserta::where('ketua_id', $user->id)->get();
+            $anggota = PesertaCalon::where('ketua_id', $user->id)->get();
         }
 
-        // Spesialisasi options for dropdown
-        $spesialisasiOptions = [
-            1 => 'Back End',
-            2 => 'Front End',
-            3 => 'System Analyst',
-            4 => 'Quality Assurance',
-        ];
+        // Spesialisasi options from database
+        $spesialisasiOptions = Spesialisasi::pluck('nama_spesialisasi', 'id')->toArray();
 
         return view('profile.edit', [
             'user' => $user,
@@ -49,7 +45,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::guard('peserta')->user();
-        
+
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -57,14 +53,13 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        // Validate ketua profile data
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
             'no_telp' => 'nullable|string|max:20',
             'email' => 'required|email|max:100',
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
-            'spesialisasi_id' => 'nullable|integer|exists:spesialisasi,id',
+            'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
             'universitas_id' => 'nullable|string|max:255',
             'jurusan_id' => 'nullable|string|max:255',
             'tanggal_mulai' => 'nullable|date',
@@ -75,38 +70,20 @@ class ProfileController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('cv')) {
-            $cvFile = $request->file('cv');
-            $cvPath = $cvFile->store('landing/profile', 'public');
-            $validated['cv'] = $cvPath;
+            $validated['cv'] = $request->file('cv')->store('landing/profile', 'public');
         }
 
         if ($request->hasFile('surat')) {
-            $suratFile = $request->file('surat');
-            $suratPath = $suratFile->store('landing/profile', 'public');
-            $validated['surat'] = $suratPath;
-        }
-
-        // Map universitas_id and jurusan_id to correct column names
-        if (isset($validated['universitas_id'])) {
-            $validated['universitas'] = $validated['universitas_id'];
-            unset($validated['universitas_id']);
-        }
-        if (isset($validated['jurusan_id'])) {
-            $validated['jurusan'] = $validated['jurusan_id'];
-            unset($validated['jurusan_id']);
+            $validated['surat'] = $request->file('surat')->store('landing/profile', 'public');
         }
 
         // Update ketua data
         $user->update($validated);
 
-        // Handle anggota data (array structure: anggota[index][field])
+        // Handle anggota data
         if ($request->has('anggota')) {
-            $anggotaData = $request->input('anggota');
-            
-            foreach ($anggotaData as $anggotaItem) {
-                if (empty($anggotaItem['nama_lengkap'])) {
-                    continue; // Skip empty entries
-                }
+            foreach ($request->anggota as $anggotaItem) {
+                if (empty($anggotaItem['nama_lengkap'])) continue;
 
                 $anggotaValidated = validator($anggotaItem, [
                     'id' => 'nullable|integer|exists:peserta_calon,id',
@@ -115,19 +92,17 @@ class ProfileController extends Controller
                     'email' => 'nullable|email|max:100',
                     'github' => 'nullable|string|max:255',
                     'linkedin' => 'nullable|string|max:255',
-                    'spesialisasi_id' => 'nullable|integer|exists:spesialisasi,id',
+                    'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
                 ])->validate();
 
                 if (!empty($anggotaItem['id'])) {
-                    // Update existing anggota
-                    $existingAnggota = Peserta::where('ketua_id', $user->id)
+                    $existingAnggota = PesertaCalon::where('ketua_id', $user->id)
                         ->find($anggotaItem['id']);
                     if ($existingAnggota) {
                         $existingAnggota->update($anggotaValidated);
                     }
                 } else {
-                    // Create new anggota
-                    Peserta::create(array_merge($anggotaValidated, [
+                    PesertaCalon::create(array_merge($anggotaValidated, [
                         'ketua_id' => $user->id,
                         'kelompok_id' => $user->kelompok_id ?? null,
                     ]));
@@ -146,27 +121,13 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $guard = $this->getActiveGuard();
-
-        $passwordRule = ['required'];
-        if ($guard) {
-            $passwordRule[] = 'current_password:'.$guard;
-        } else {
-            $passwordRule[] = 'current_password';
-        }
-
         $request->validateWithBag('userDeletion', [
-            'password' => $passwordRule,
+            'password' => ['required', 'current_password'],
         ]);
 
-        $user = $this->getAuthenticatedUser();
+        $user = $request->user();
 
-        // Logout from the specific guard used
-        if ($guard === 'peserta') {
-            Auth::guard('peserta')->logout();
-        } else {
-            Auth::logout();
-        }
+        Auth::logout();
 
         $user->delete();
 
@@ -175,6 +136,7 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
 
     /**
      * Update profile data for peserta via AJAX.
@@ -189,7 +151,7 @@ class ProfileController extends Controller
             'email' => 'required|email|max:100',
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
-            'spesialisasi_id' => 'nullable|integer|exists:spesialisasi,id',
+            'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
             'tanggal_mulai' => 'nullable|date',
             'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
         ]);
@@ -215,10 +177,10 @@ class ProfileController extends Controller
             'email' => 'required|email|max:100|unique:peserta_calon,email',
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
-            'spesialisasi_id' => 'nullable|integer|exists:spesialisasi,id',
+            'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
         ]);
 
-        $anggota = Peserta::create(array_merge($validated, [
+        $anggota = PesertaCalon::create(array_merge($validated, [
             'ketua_id' => $ketua->id,
             'kelompok_id' => $ketua->kelompok_id ?? null,
         ]));
@@ -233,7 +195,7 @@ class ProfileController extends Controller
                 'no_telp' => $anggota->no_telp,
                 'github' => $anggota->github ?? '-',
                 'linkedin' => $anggota->linkedin ?? '-',
-                'spesialisasi' => $this->getSpesialisasiName($anggota->spesialisasi_id),
+                'spesialisasi' => optional($anggota->spesialisasi)->nama_spesialisasi ?? '-',
             ],
         ]);
     }
@@ -241,17 +203,42 @@ class ProfileController extends Controller
     /**
      * Delete anggota via AJAX.
      */
-    public function destroyAnggota($id): JsonResponse
+    public function destroyAnggota(int $id): JsonResponse
     {
-        $ketua = Auth::guard('peserta')->user();
-        
-        $anggota = Peserta::where('ketua_id', $ketua->id)->findOrFail($id);
-        $anggota->delete();
+        try {
+            $ketua = Auth::guard('peserta')->user() ?? Auth::user();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Anggota berhasil dihapus.',
-        ]);
+            if (!$ketua) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized.',
+                ], 401);
+            }
+
+            // Pastikan anggota memang milik ketua yang sedang login
+            $anggota = PesertaCalon::where('id', $id)
+                ->where('ketua_id', $ketua->id)
+                ->first();
+
+            if (!$anggota) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anggota tidak ditemukan atau bukan milik Anda.',
+                ], 404);
+            }
+
+            $anggota->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Anggota berhasil dihapus.',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -261,7 +248,8 @@ class ProfileController extends Controller
     {
         $ketua = Auth::guard('peserta')->user();
 
-        $anggota = Peserta::where('ketua_id', $ketua->id)
+        $anggota = PesertaCalon::where('ketua_id', $ketua->id)
+            ->with('spesialisasi')
             ->select('id', 'nama_lengkap', 'email', 'no_telp', 'github', 'linkedin', 'spesialisasi_id', 'tanggal_mulai', 'tanggal_selesai')
             ->get()
             ->map(function ($a) {
@@ -272,7 +260,7 @@ class ProfileController extends Controller
                     'no_telp' => $a->no_telp,
                     'github' => $a->github ?? '-',
                     'linkedin' => $a->linkedin ?? '-',
-                    'spesialisasi' => $this->getSpesialisasiName($a->spesialisasi_id),
+                    'spesialisasi' => optional($a->spesialisasi)->nama_spesialisasi ?? '-',
                     'tanggal_mulai' => $a->tanggal_mulai?->format('Y-m-d') ?? '-',
                     'tanggal_selesai' => $a->tanggal_selesai?->format('Y-m-d') ?? '-',
                 ];
@@ -298,21 +286,6 @@ class ProfileController extends Controller
     private function getActiveGuard(): ?string
     {
         return Auth::check() ? 'web' : (Auth::guard('peserta')->check() ? 'peserta' : null);
-    }
-
-    /**
-     * Get spesialisasi name by ID.
-     */
-    private function getSpesialisasiName(?int $id): string
-    {
-        $spesialisasiMap = [
-            1 => 'Back End',
-            2 => 'Front End',
-            3 => 'System Analyst',
-            4 => 'Quality Assurance',
-        ];
-
-        return $spesialisasiMap[$id] ?? 'N/A';
     }
 
 }
