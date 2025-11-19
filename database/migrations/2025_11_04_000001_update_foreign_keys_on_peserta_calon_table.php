@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Jalankan perubahan ke database.
-     */
     public function up(): void
     {
         // Skip this migration if calon_pesertas table exists (newer schema)
@@ -30,7 +27,6 @@ return new class extends Migration
                  WHERE TABLE_SCHEMA = DATABASE() 
                  AND TABLE_NAME = 'peserta_calon' 
                  AND CONSTRAINT_TYPE = 'FOREIGN KEY'"
-            );
 
             // Drop existing foreign keys if they exist
             foreach ($foreignKeys as $key) {
@@ -44,18 +40,23 @@ return new class extends Migration
                 }
             }
         });
+            }
 
+        // 🔹 Pastikan tipe kolom sudah sesuai
         Schema::table('peserta_calon', function (Blueprint $table) {
-            // Samakan tipe kolom dengan BIGINT UNSIGNED
             if (Schema::hasColumn('peserta_calon', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable()->change();
             }
-            
             if (Schema::hasColumn('peserta_calon', 'ketua_id')) {
                 $table->unsignedBigInteger('ketua_id')->nullable()->change();
+            } else {
+                $table->unsignedBigInteger('ketua_id')->nullable()->after('user_id');
             }
 
-            // Tambahkan relasi baru
+        }); 
+
+        // 🔹 Tambahkan FK baru
+        Schema::table('peserta_calon', function (Blueprint $table) {
             if (Schema::hasColumn('peserta_calon', 'user_id')) {
                 $table->foreign('user_id')
                     ->references('id')
@@ -70,11 +71,13 @@ return new class extends Migration
                     ->nullOnDelete();
             }
         });
-    }
+            if (Schema::hasColumn('peserta_calon', 'ketua_id')) {
+                $table->foreign('ketua_id')
+                    ->references('id')
+                    ->on('peserta_calon')
+                    ->nullOnDelete();
+            }
 
-    /**
-     * Rollback perubahan.
-     */
     public function down(): void
     {
         if (!Schema::hasTable('peserta_calon')) {
@@ -103,4 +106,4 @@ return new class extends Migration
             }
         });
     }
-};
+}
