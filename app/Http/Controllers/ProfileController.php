@@ -7,9 +7,15 @@ use App\Models\Spesialisasi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\ProfileDataUpdateRequest;
+use App\Http\Requests\AnggotaStoreRequest;
+use App\Http\Requests\AnggotaUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -42,7 +48,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request)
+    public function update(ProfileUpdateRequest $request)
     {
         $user = Auth::guard('peserta')->user();
 
@@ -53,31 +59,63 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:100',
-            'no_telp' => 'nullable|string|max:20',
-            'email' => 'required|email|max:100',
-            'github' => 'nullable|string|max:255',
-            'linkedin' => 'nullable|string|max:255',
-            'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
-            'universitas_id' => 'nullable|string|max:255',
-            'jurusan_id' => 'nullable|string|max:255',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'cv' => 'nullable|file|mimes:zip|max:10240',
-            'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    $validated = $request->validate([
+    'nama_lengkap' => 'required|string|max:100',
+    'no_telp' => 'nullable|string|max:20',
+    'github' => 'nullable|string|max:255',
+    'linkedin' => 'nullable|string|max:255',
+    'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+    'universitas_id' => 'nullable|string|max:255',
+    'jurusan_id' => 'nullable|string|max:255',
+    'tanggal_mulai' => 'nullable|date',
+    'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+    'cv' => 'nullable|file|mimes:zip|max:10240',
+    'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+]);
 
-        // Handle file uploads
+// tambahkan manual email dari user
+$validated['email'] = $user->email;
+
+
         if ($request->hasFile('cv')) {
-            $validated['cv'] = $request->file('cv')->store('landing/profile', 'public');
+            $file = $request->file('cv');
+            $oldPath = $user->cv;
+            $base = $oldPath ? pathinfo($oldPath, PATHINFO_FILENAME) : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $ext = strtolower($file->getClientOriginalExtension());
+            $filename = Str::slug($base) . '.' . $ext;
+            if ($oldPath) {
+                if (Storage::disk('local')->exists($oldPath)) {
+                    Storage::disk('local')->delete($oldPath);
+                }
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+
+            Storage::disk('local')->putFileAs('cv', $file, $filename);
+            $validated['cv'] = 'cv/' . $filename;
         }
 
         if ($request->hasFile('surat')) {
-            $validated['surat'] = $request->file('surat')->store('landing/profile', 'public');
+            $file = $request->file('surat');
+            $oldPath = $user->surat;
+            $base = $oldPath ? pathinfo($oldPath, PATHINFO_FILENAME) : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $ext = strtolower($file->getClientOriginalExtension());
+            $filename = Str::slug($base) . '.' . $ext;
+
+            if ($oldPath) {
+                if (Storage::disk('local')->exists($oldPath)) {
+                    Storage::disk('local')->delete($oldPath);
+                }
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+
+            Storage::disk('local')->putFileAs('surat', $file, $filename);
+            $validated['surat'] = 'surat/' . $filename;
         }
 
-        // Update ketua data
         $user->update($validated);
 
         // Handle anggota data
@@ -93,27 +131,43 @@ class ProfileController extends Controller
                     'github' => 'nullable|string|max:255',
                     'linkedin' => 'nullable|string|max:255',
                     'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+                    'universitas_id' => 'nullable|string|max:255',
+                    'jurusan_id' => 'nullable|string|max:255',
+                    'tanggal_mulai' => 'nullable|date',
+                    'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
                 ])->validate();
 
+                // Prepare fields that should always be linked to ketua (main account)
+                $linked = [
+                    'universitas_id' => $user->universitas_id ?? null,
+                    'jurusan_id' => $user->jurusan_id ?? null,
+                    'tanggal_mulai' => $user->tanggal_mulai ?? null,
+                    'tanggal_selesai' => $user->tanggal_selesai ?? null,
+                    'cv' => $user->cv ?? null,
+                    'surat' => $user->surat ?? null,
+                    'kelompok_id' => $user->kelompok_id ?? null,
+                ];
+
                 if (!empty($anggotaItem['id'])) {
-                    $existingAnggota = PesertaCalon::where('ketua_id', $user->id)
-                        ->find($anggotaItem['id']);
+                    $existingAnggota = PesertaCalon::where('ketua_id', $user->id)->find($anggotaItem['id']);
                     if ($existingAnggota) {
-                        $existingAnggota->update($anggotaValidated);
+                        // Merge validated fields but force linked fields to ketua values
+                        $existingAnggota->update(array_merge($anggotaValidated, $linked));
                     }
                 } else {
+                    // Create anggota without password (password is nullable)
                     PesertaCalon::create(array_merge($anggotaValidated, [
                         'ketua_id' => $user->id,
-                        'kelompok_id' => $user->kelompok_id ?? null,
+                    ], $linked, [
+                        // prefer provided github/linkedin but fallback to ketua
+                        'github' => $anggotaValidated['github'] ?? $user->github ?? null,
+                        'linkedin' => $anggotaValidated['linkedin'] ?? $user->linkedin ?? null,
                     ]));
                 }
             }
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Profil dan anggota berhasil disimpan.',
-        ]);
+    return redirect()->back()->with('success', 'Profil dan anggota berhasil disimpan.');
     }
 
     /**
@@ -121,13 +175,18 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Determine which guard is authenticated
+        $guard = Auth::guard('peserta')->check() ? 'peserta' : 'web';
+        $passwordRule = 'current_password:' . $guard;
+        
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+            'password' => ['required', $passwordRule],
         ]);
 
-        $user = $request->user();
+        // Get user from the appropriate guard
+        $user = Auth::guard('peserta')->check() ? Auth::guard('peserta')->user() : Auth::user();
 
-        Auth::logout();
+        Auth::guard($guard)->logout();
 
         $user->delete();
 
@@ -141,33 +200,21 @@ class ProfileController extends Controller
     /**
      * Update profile data for peserta via AJAX.
      */
-    public function updateProfileData(Request $request): JsonResponse
+    public function updateProfileData(ProfileDataUpdateRequest $request): JsonResponse
     {
         $user = Auth::guard('peserta')->user();
-
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:100',
-            'no_telp' => 'required|string|max:20',
-            'email' => 'required|email|max:100',
-            'github' => 'nullable|string|max:255',
-            'linkedin' => 'nullable|string|max:255',
-            'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-        ]);
+        $validated = $request->validated();
 
         $user->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Profil berhasil diperbarui.',
-        ]);
+    return redirect()->back()->with
+    ('success', 'Profil dan anggota berhasil disimpan.');
     }
 
     /**
      * Store a new anggota via AJAX.
      */
-    public function storeAnggota(Request $request): JsonResponse
+    public function storeAnggota(AnggotaStoreRequest $request): JsonResponse
     {
         $ketua = Auth::guard('peserta')->user();
 
@@ -178,11 +225,28 @@ class ProfileController extends Controller
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
             'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+            'universitas_id' => 'nullable|string|max:255',
+            'jurusan_id' => 'nullable|string|max:255',
+            'tanggal_mulai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
         ]);
+
+        // Force linked fields to ketua values so anggota are linked to the ketua's profile
+        $linked = [
+            'universitas_id' => $ketua->universitas_id ?? null,
+            'jurusan_id' => $ketua->jurusan_id ?? null,
+            'tanggal_mulai' => $ketua->tanggal_mulai ?? null,
+            'tanggal_selesai' => $ketua->tanggal_selesai ?? null,
+            'cv' => $ketua->cv ?? null,
+            'surat' => $ketua->surat ?? null,
+            'kelompok_id' => $ketua->kelompok_id ?? null,
+        ];
 
         $anggota = PesertaCalon::create(array_merge($validated, [
             'ketua_id' => $ketua->id,
-            'kelompok_id' => $ketua->kelompok_id ?? null,
+        ], $linked, [
+            'github' => $validated['github'] ?? $ketua->github ?? null,
+            'linkedin' => $validated['linkedin'] ?? $ketua->linkedin ?? null,
         ]));
 
         return response()->json([
@@ -241,6 +305,17 @@ class ProfileController extends Controller
         }
     }
 
+    public function updateAnggota(AnggotaUpdateRequest $request, int $id): JsonResponse
+    {
+        $ketua = Auth::guard('peserta')->user() ?? Auth::user();
+        $anggota = PesertaCalon::where('ketua_id', $ketua->id)->findOrFail($id);
+        $anggota->update($request->validated());
+        return response()->json([
+            'success' => true,
+            'message' => 'Anggota berhasil diperbarui.',
+        ]);
+    }
+
     /**
      * Get all anggota for the authenticated ketua via AJAX.
      */
@@ -250,7 +325,7 @@ class ProfileController extends Controller
 
         $anggota = PesertaCalon::where('ketua_id', $ketua->id)
             ->with('spesialisasi')
-            ->select('id', 'nama_lengkap', 'email', 'no_telp', 'github', 'linkedin', 'spesialisasi_id', 'tanggal_mulai', 'tanggal_selesai')
+            ->select('id', 'nama_lengkap', 'email', 'no_telp', 'github', 'linkedin', 'spesialisasi_id', 'tanggal_mulai', 'tanggal_selesai', 'universitas_id', 'jurusan_id', 'cv', 'surat', 'kelompok_id')
             ->get()
             ->map(function ($a) {
                 return [
@@ -263,6 +338,11 @@ class ProfileController extends Controller
                     'spesialisasi' => optional($a->spesialisasi)->nama_spesialisasi ?? '-',
                     'tanggal_mulai' => $a->tanggal_mulai?->format('Y-m-d') ?? '-',
                     'tanggal_selesai' => $a->tanggal_selesai?->format('Y-m-d') ?? '-',
+                    'universitas_id' => $a->universitas_id ?? null,
+                    'jurusan_id' => $a->jurusan_id ?? null,
+                    'cv' => $a->cv ?? null,
+                    'surat' => $a->surat ?? null,
+                    'kelompok_id' => $a->kelompok_id ?? null,
                 ];
             });
 
@@ -286,6 +366,78 @@ class ProfileController extends Controller
     private function getActiveGuard(): ?string
     {
         return Auth::check() ? 'web' : (Auth::guard('peserta')->check() ? 'peserta' : null);
+    }
+
+    public function downloadCv(Request $request, \App\Models\Peserta $peserta)
+    {
+        $isOwner = Auth::guard('peserta')->check() && Auth::guard('peserta')->id() === $peserta->id;
+        $isHrd = Auth::guard('web')->check();
+
+        if (! $isOwner && ! $isHrd) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $path = $peserta->cv;
+        if (! $path || ! Storage::disk('local')->exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        return response()->download(Storage::disk('local')->path($path));
+    }
+
+    public function downloadSurat(Request $request, \App\Models\Peserta $peserta)
+    {
+        $isOwner = Auth::guard('peserta')->check() && Auth::guard('peserta')->id() === $peserta->id;
+        $isHrd = Auth::guard('web')->check();
+
+        if (! $isOwner && ! $isHrd) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $path = $peserta->surat;
+        if (! $path || ! Storage::disk('local')->exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        return response()->download(Storage::disk('local')->path($path));
+    }
+
+    public function downloadCvCalon(Request $request, \App\Models\PesertaCalon $calon)
+    {
+        $isOwner = Auth::guard('peserta')->check() && Auth::guard('peserta')->id() === $calon->id;
+        $isHrd = Auth::guard('web')->check();
+
+        if (! $isOwner && ! $isHrd) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $path = $calon->cv;
+        if ($path && Storage::disk('local')->exists($path)) {
+            return response()->download(Storage::disk('local')->path($path));
+        }
+        if ($path && Storage::disk('public')->exists($path)) {
+            return response()->download(Storage::disk('public')->path($path));
+        }
+        return response()->json(['message' => 'File tidak ditemukan'], 404);
+    }
+
+    public function downloadSuratCalon(Request $request, \App\Models\PesertaCalon $calon)
+    {
+        $isOwner = Auth::guard('peserta')->check() && Auth::guard('peserta')->id() === $calon->id;
+        $isHrd = Auth::guard('web')->check();
+
+        if (! $isOwner && ! $isHrd) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $path = $calon->surat;
+        if ($path && Storage::disk('local')->exists($path)) {
+            return response()->download(Storage::disk('local')->path($path));
+        }
+        if ($path && Storage::disk('public')->exists($path)) {
+            return response()->download(Storage::disk('public')->path($path));
+        }
+        return response()->json(['message' => 'File tidak ditemukan'], 404);
     }
 
 }

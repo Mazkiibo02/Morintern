@@ -24,11 +24,12 @@
     <div class="py-12 relative z-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- FORM PROFIL KETUA --}}
-            <form id="formProfilKetua" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            {{-- FORM PROFIL KETUA + ANGGOTA --}}
+            <form id="formProfilKetua" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" 
+                class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 @csrf
 
-                {{-- Header dengan Tombol Penilaian --}}
+                {{-- Header --}}
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-lg font-semibold text-gray-800">Profil Magang</h2>
                     <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
@@ -196,52 +197,323 @@
                         <button type="button" class="hapusBaru absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm">
                             Hapus
                         </button>
+                </div>
+
+                {{-- Nama Lengkap --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Nama Lengkap</label>
+                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- Asal Univ --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Asal Univ</label>
+                    <input type="text" name="universitas_id" value="{{ old('universitas_id', $user->universitas_id ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- Jurusan --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Jurusan</label>
+                    <input type="text" name="jurusan_id" value="{{ old('jurusan_id', $user->jurusan_id ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- No Telepon --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">No Telepon</label>
+                    <input type="text" name="no_telp" value="{{ old('no_telp', $user->no_telp ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- Email --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Email</label>
+                    <input type="email" disabled value="{{ $user->email ?? '' }}"
+                        class="col-span-2 bg-gray-100 border border-gray-300 rounded-md px-3 py-2 cursor-not-allowed">
+                </div>
+
+                {{-- Link Github --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Link Github</label>
+                    <input type="text" name="github" value="{{ old('github', $user->github ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- LinkedIn --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">LinkedIn</label>
+                    <input type="text" name="linkedin" value="{{ old('linkedin', $user->linkedin ?? '') }}"
+                        class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
+                </div>
+
+                {{-- Tanggal Mulai & Selesai --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Tanggal Mulai &<br>Tanggal Selesai</label>
+                    <div class="col-span-2 flex items-center gap-2">
+                        <input type="date" name="tanggal_mulai" class="border border-blue-300 rounded-md px-3 py-2 flex-1"
+                            value="{{ old('tanggal_mulai', $user->tanggal_mulai?->format('Y-m-d')) }}">
+                        <span class="text-gray-600">s/d</span>
+                        <input type="date" name="tanggal_selesai" class="border border-blue-300 rounded-md px-3 py-2 flex-1"
+                            value="{{ old('tanggal_selesai', $user->tanggal_selesai?->format('Y-m-d')) }}">
                     </div>
-                </template>
-            </div>
-
-        </div>
-    </div>
-
-    {{-- Hapus Akun --}}
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-red-300/50">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Hapus Akun
-                </h3>
-                <div class="max-w-xl">
-                    @includeIf('profile.partials.delete-user-form')
                 </div>
-            </div>
 
-            {{-- Hapus Akun --}}
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-red-300/50">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Hapus Akun
-                </h3>
-                <div class="max-w-xl">
-                    @includeIf('profile.partials.delete-user-form')
+                {{-- CV --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">CV</label>
+                    <div class="col-span-2">
+                        <input type="file" name="cv" accept=".zip"
+                            class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
+                        @if($user->cv ?? false)
+                            <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->cv) }}</p>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            {{-- Daftar Anggota Kelompok --}}
-            @if(isset($anggota) && count($anggota) > 0)
-                <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        Anggota Kelompok
-                    </h3>
-                    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($anggota as $a)
-                            <li class="py-3 flex justify-between items-center">
-                                <span class="text-gray-800 dark:text-gray-100">
-                                    {{ $a->nama ?? 'Nama tidak tersedia' }}
-                                </span>
-                                <button class="text-red-500 hover:text-red-700">Hapus</button>
-                            </li>
+                {{-- Surat Lamaran --}}
+                <div class="mb-4 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Surat Lamaran</label>
+                    <div class="col-span-2">
+                        <input type="file" name="surat" accept=".jpg,.jpeg,.png"
+                            class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
+                        @if($user->surat ?? false)
+                            <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->surat) }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Spesialisasi --}}
+                <div class="mb-6 grid grid-cols-3 gap-4 items-center">
+                    <label class="text-gray-700 text-right">Spesialisasi Magang</label>
+                    <select name="spesialisasi_id" class="col-span-2 border border-blue-300 rounded-md px-3 py-2">
+                        <option value="">-Silahkan Pilih-</option>
+                        @foreach($spesialisasiOptions as $id => $nama)
+                            <option value="{{ $id }}" {{ ($user->spesialisasi_id ?? '') == $id ? 'selected' : '' }}>
+                                {{ $nama }}
+                            </option>
                         @endforeach
-                    </ul>
+                    </select>
                 </div>
-            @endif
+
+                {{-- Tombol Simpan --}}
+                <div class="flex justify-end pt-4 border-t mt-8">
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Simpan 
+                    </button>
+                </div>
+
+
+                    <div id="anggotaContainer" class="space-y-4">
+                        @foreach ($anggota as $i => $a)
+                            <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
+
+                                <!-- Nama Lengkap -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                                    <input type="text" name="anggota[{{ $i }}][nama_lengkap]" 
+                                        value="{{ $a->nama_lengkap }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Email</label>
+                                    <input type="email" name="anggota[{{ $i }}][email]" 
+                                        value="{{ $a->email }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- No Telepon -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">No Telepon</label>
+                                    <input type="text" name="anggota[{{ $i }}][no_telp }}"
+                                        value="{{ $a->no_telp }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Spesialisasi -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
+                                    <select name="anggota[{{ $i }}][spesialisasi_id]"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                        <option value="">Pilih Spesialisasi</option>
+                                        @foreach ($spesialisasiOptions as $id => $nama)
+                                            <option value="{{ $id }}" {{ $a->spesialisasi_id == $id ? 'selected' : '' }}>
+                                                {{ $nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- GitHub -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">GitHub</label>
+                                    <input type="text" name="anggota[{{ $i }}][github]" 
+                                        value="{{ $a->github }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- LinkedIn -->
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 mb-1">LinkedIn</label>
+                                    <input type="text" name="anggota[{{ $i }}][linkedin }}" 
+                                        value="{{ $a->linkedin }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Hidden ID -->
+                                <input type="hidden" name="anggota[{{ $i }}][id]" value="{{ $a->id }}">
+
+                                <!-- Tombol Hapus -->
+                                <button type="button"
+                                    class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+                                    Hapus
+                                </button>
+
+                            </div>
+                        @endforeach
+                    </div>
+
+
+        <template id="anggotaTemplate">
+            <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
+
+                <!-- Nama Lengkap -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" name="anggota[__INDEX__][nama_lengkap]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Email</label>
+                    <input type="email" name="anggota[__INDEX__][email]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- No Telepon -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">No Telepon</label>
+                    <input type="text" name="anggota[__INDEX__][no_telp]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Spesialisasi -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
+                    <select name="anggota[__INDEX__][spesialisasi_id]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                        <option value="">Pilih Spesialisasi</option>
+                        @foreach ($spesialisasiOptions as $id => $nama)
+                            <option value="{{ $id }}">{{ $nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+        <!-- Github -->
+        <div class="mb-4">
+            <label class="block text-gray-700 mb-1">GitHub</label>
+            <input type="text" name="anggota[__INDEX__][github]"
+                placeholder="https://github.com/username"
+                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="mb-6">
+            <label class="block text-gray-700 mb-1">LinkedIn</label>
+            <input type="text" name="anggota[__INDEX__][linkedin]"
+                placeholder="https://linkedin.com/in/username"
+                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- tombol hapus -->
+        <button type="button"
+            class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+            Hapus
+        </button>
+
+    </div>
+</template>
+
+
+            </form>
+
+            {{-- SECTION: Daftar Anggota --}}
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">Daftar Anggota</h2>
+                        <button id="btnTambahAnggota" type="button"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            + Tambah Anggota
+                        </button>
+                    </div>
+
+            {{-- SECTION: Hapus Akun --}}
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Hapus Akun</h3>
+                <div class="border-t border-gray-200 pt-4">
+                    @includeIf('profile.partials.delete-user-form')
+                </div>
+            </div>
 
         </div>
     </div>
+
+    {{-- SCRIPT TAMBAH / HAPUS ANGGOTA --}}
+    @push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const btnTambah = document.getElementById("btnTambahAnggota");
+        const container = document.getElementById("anggotaContainer");
+        const template = document.getElementById("anggotaTemplate").innerHTML;
+        let index = {{ count($anggota) }};
+
+        btnTambah.addEventListener("click", () => {
+            let html = template.replace(/__INDEX__/g, index++);
+            container.insertAdjacentHTML("beforeend", html);
+        });
+
+        container.addEventListener("click", (e) => {
+            if (e.target.classList.contains("btnHapusAnggota")) {
+                const item = e.target.closest('.anggota-item');
+                const idInput = item.querySelector('input[name$="[id]"]');
+
+                // If anggota has an ID, call server to delete; otherwise just remove from DOM
+                if (idInput && idInput.value) {
+                    const anggotaId = idInput.value;
+                    if (!confirm('Hapus anggota ini?')) return;
+
+                    fetch(`/profile/anggota/${anggotaId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        if (json.success) {
+                            item.remove();
+                        } else {
+                            alert(json.message || 'Gagal menghapus anggota.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Terjadi kesalahan saat menghapus anggota.');
+                    });
+                } else {
+                    item.remove();
+                }
+            }
+        });
+    });
+
+    </script>
+    @endpush
 </x-app-layout>
