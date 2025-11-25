@@ -25,14 +25,19 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- FORM PROFIL KETUA + ANGGOTA --}}
-            <form id="formProfilKetua" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" 
+            @php
+                $isPeserta = Auth::guard('peserta')->check();
+                $formAction = $isPeserta ? route('peserta.profil.update') : route('profile.update');
+                $anggotaBase = $isPeserta ? url('/peserta/profil') : url('/profile');
+            @endphp
+            <form id="formProfilKetua" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" 
                 class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 @csrf
 
                 {{-- Header --}}
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-lg font-semibold text-gray-800">Profil Magang</h2>
-                    <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    <button id="btnPenilaian" type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                         Penilaian
                     </button>
                 </div>
@@ -135,8 +140,167 @@
                     </select>
                 </div>
 
-                {{-- SECTION: Daftar Anggota --}}
-                <div class="mt-10">
+                {{-- Tombol Simpan --}}
+                <div class="flex justify-end pt-4 border-t mt-8">
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Simpan 
+                    </button>
+                </div>
+
+
+                    <div id="anggotaContainer" class="space-y-4">
+                        @foreach ($anggota as $i => $a)
+                            <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
+
+                                <!-- Nama Lengkap -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                                    <input type="text" name="anggota[{{ $i }}][nama_lengkap]" 
+                                        value="{{ $a->nama_lengkap }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Email</label>
+                                    <input type="email" name="anggota[{{ $i }}][email]" 
+                                        value="{{ $a->email }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- No Telepon -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">No Telepon</label>
+                                        <input type="text" name="anggota[{{ $i }}][no_telp]"
+                                        value="{{ $a->no_telp }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Spesialisasi -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
+                                    <select name="anggota[{{ $i }}][spesialisasi_id]"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                        <option value="">Pilih Spesialisasi</option>
+                                        @foreach ($spesialisasiOptions as $id => $nama)
+                                            <option value="{{ $id }}" {{ $a->spesialisasi_id == $id ? 'selected' : '' }}>
+                                                {{ $nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- GitHub -->
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-1">GitHub</label>
+                                    <input type="text" name="anggota[{{ $i }}][github]" 
+                                        value="{{ $a->github }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- LinkedIn -->
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 mb-1">LinkedIn</label>
+                                    <input type="text" name="anggota[{{ $i }}][linkedin]"
+                                        value="{{ $a->linkedin }}"
+                                        class="w-full border border-blue-300 rounded-md px-3 py-2">
+                                </div>
+
+                                <!-- Hidden ID -->
+                                <input type="hidden" name="anggota[{{ $i }}][id]" value="{{ $a->id }}">
+
+                                <!-- Tombol Hapus -->
+                                <button type="button"
+                                    class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+                                    Hapus
+                                </button>
+
+                            </div>
+                        @endforeach
+                    </div>
+
+
+        <template id="anggotaTemplate">
+            <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
+
+                <!-- Nama Lengkap -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" name="anggota[__INDEX__][nama_lengkap]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Email</label>
+                    <input type="email" name="anggota[__INDEX__][email]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- No Telepon -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">No Telepon</label>
+                    <input type="text" name="anggota[__INDEX__][no_telp]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Spesialisasi -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
+                    <select name="anggota[__INDEX__][spesialisasi_id]"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                        <option value="">Pilih Spesialisasi</option>
+                        @foreach ($spesialisasiOptions as $id => $nama)
+                            <option value="{{ $id }}">{{ $nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+        <!-- Github -->
+        <div class="mb-4">
+            <label class="block text-gray-700 mb-1">GitHub</label>
+            <input type="text" name="anggota[__INDEX__][github]"
+                placeholder="https://github.com/username"
+                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="mb-6">
+            <label class="block text-gray-700 mb-1">LinkedIn</label>
+            <input type="text" name="anggota[__INDEX__][linkedin]"
+                placeholder="https://linkedin.com/in/username"
+                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- tombol hapus -->
+        <button type="button"
+            class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+            Hapus
+        </button>
+
+    </div>
+</template>
+
+
+            </form>
+
+    <!-- Penilaian Modal -->
+    <div id="penilaianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="penilaianTitle">
+        <div class="absolute inset-0 bg-black/50" id="penilaianOverlay" aria-hidden="true"></div>
+        <div class="relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl p-6 z-10" tabindex="-1">
+            <div class="flex items-start justify-between mb-4">
+                <h3 id="penilaianTitle" class="text-lg font-semibold">Penilaian Magang</h3>
+                <button id="btnClosePenilaian" class="text-gray-500 hover:text-gray-800">Tutup</button>
+            </div>
+            <div id="penilaianContent" class="space-y-4 max-h-[60vh] overflow-auto">
+                <p class="text-sm text-gray-500">Memuat data penilaian...</p>
+            </div>
+        </div>
+    </div>
+
+            {{-- SECTION: Daftar Anggota --}}
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-10">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-lg font-semibold text-gray-800">Daftar Anggota</h2>
                         <button id="btnTambahAnggota" type="button"
@@ -144,65 +308,6 @@
                             + Tambah Anggota
                         </button>
                     </div>
-
-                    <div id="anggotaContainer" class="space-y-4">
-                        @foreach ($anggota as $i => $a)
-                            <div class="border border-blue-300/50 rounded-lg p-4 relative anggota-item">
-                                <input type="hidden" name="anggota[{{ $i }}][id]" value="{{ $a->id }}">
-                                <input type="text" name="anggota[{{ $i }}][nama_lengkap]" value="{{ $a->nama_lengkap }}"
-                                    placeholder="Nama Lengkap" class="border border-blue-300 rounded-md px-3 py-2 w-full mb-2">
-                                <input type="email" name="anggota[{{ $i }}][email]" value="{{ $a->email }}"
-                                    placeholder="Email" class="border border-blue-300 rounded-md px-3 py-2 w-full mb-2">
-                                <input type="text" name="anggota[{{ $i }}][no_telp]" value="{{ $a->no_telp }}"
-                                    placeholder="No Telepon" class="border border-blue-300 rounded-md px-3 py-2 w-full mb-2">
-                                <select name="anggota[{{ $i }}][spesialisasi_id]"
-                                    class="border border-blue-300 rounded-md px-3 py-2 w-full mb-2">
-                                    <option value="">Pilih Spesialisasi</option>
-                                    @foreach ($spesialisasiOptions as $id => $nama)
-                                        <option value="{{ $id }}" {{ $a->spesialisasi_id == $id ? 'selected' : '' }}>
-                                            {{ $nama }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <button type="button" class="btnHapusAnggota absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm">
-                                    Hapus
-                                </button>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <template id="anggotaTemplate">
-                    <div class="border border-blue-300/50 rounded-lg p-4 relative anggota-item bg-white shadow-sm mt-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="text" name="anggota[__INDEX__][nama_lengkap]" placeholder="Nama Lengkap" required
-                                class="border border-blue-300 rounded-md px-3 py-2">
-                            <input type="email" name="anggota[__INDEX__][email]" placeholder="Email" required
-                                class="border border-blue-300 rounded-md px-3 py-2">
-                            <input type="text" name="anggota[__INDEX__][no_telp]" placeholder="No Telepon" required
-                                class="border border-blue-300 rounded-md px-3 py-2">
-                            <select name="anggota[__INDEX__][spesialisasi_id]" required
-                                class="border border-blue-300 rounded-md px-3 py-2">
-                                <option value="">Pilih Spesialisasi</option>
-                                @foreach ($spesialisasiOptions as $id => $nama)
-                                    <option value="{{ $id }}">{{ $nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <button type="button" class="hapusBaru absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm">
-                            Hapus
-                        </button>
-                    </div>
-                </template>
-
-                {{-- Tombol Simpan --}}
-                <div class="flex justify-end pt-4 border-t mt-8">
-                    <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                        Simpan Semua
-                    </button>
-                </div>
-            </form>
 
             {{-- SECTION: Hapus Akun --}}
             <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
@@ -218,10 +323,11 @@
     {{-- SCRIPT TAMBAH / HAPUS ANGGOTA --}}
     @push('scripts')
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
         const btnTambah = document.getElementById("btnTambahAnggota");
         const container = document.getElementById("anggotaContainer");
         const template = document.getElementById("anggotaTemplate").innerHTML;
+        const anggotaBase = "{{ $anggotaBase }}";
         let index = {{ count($anggota) }};
 
         btnTambah.addEventListener("click", () => {
@@ -229,12 +335,138 @@
             container.insertAdjacentHTML("beforeend", html);
         });
 
+        // Penilaian popup handling
+        const btnPenilaian = document.getElementById('btnPenilaian');
+        const penilaianModal = document.getElementById('penilaianModal');
+        const penilaianOverlay = document.getElementById('penilaianOverlay');
+        const btnClosePenilaian = document.getElementById('btnClosePenilaian');
+        const penilaianContent = document.getElementById('penilaianContent');
+
+        let _penilaianKeyHandler = null;
+        function closePenilaian() {
+            penilaianModal.classList.add('hidden');
+            penilaianContent.innerHTML = '';
+            document.body.classList.remove('overflow-hidden');
+            if (typeof _penilaianKeyHandler === 'function') {
+                document.removeEventListener('keydown', _penilaianKeyHandler);
+                _penilaianKeyHandler = null;
+            }
+            // restore focus to the Penilaian button
+            if (btnPenilaian) btnPenilaian.focus();
+            if (btnPenilaian) btnPenilaian.disabled = false;
+        }
+
+        function renderFileHtml(fileUrl) {
+            if (!fileUrl) return '';
+            const ext = fileUrl.split('.').pop().toLowerCase();
+            const imageExt = ['jpg','jpeg','png','gif','webp'];
+            if (imageExt.includes(ext)) {
+                return `<img src="${fileUrl}" alt="Hasil Penilaian" class="max-w-full max-h-96 rounded-md border"/>`;
+            }
+            // PDF or others -> provide link
+            return `<a href="${fileUrl}" target="_blank" class="text-blue-600 underline">Lihat file penilaian</a>`;
+        }
+
+        if (btnPenilaian) {
+            btnPenilaian.addEventListener('click', (e) => {
+                e.preventDefault();
+                btnPenilaian.disabled = true;
+                penilaianContent.innerHTML = '<p class="text-sm text-gray-500">Memuat data penilaian...</p>';
+                penilaianModal.classList.remove('hidden');
+                // lock body scroll
+                document.body.classList.add('overflow-hidden');
+                // focus the modal container
+                const modalContainer = penilaianModal.querySelector('[tabindex="-1"]');
+                if (modalContainer) modalContainer.focus();
+
+                // add key handler to close on Escape
+                _penilaianKeyHandler = function (ev) {
+                    if (ev.key === 'Escape' || ev.key === 'Esc') {
+                        closePenilaian();
+                    }
+                };
+                document.addEventListener('keydown', _penilaianKeyHandler);
+
+                fetch(`${anggotaBase}/penilaian`, {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(json => {
+                    if (!json.success) {
+                        penilaianContent.innerHTML = `<p class="text-sm text-red-500">${json.message || 'Gagal memuat penilaian.'}</p>`;
+                        return;
+                    }
+
+                    const data = json.data || [];
+                    if (data.length === 0) {
+                        penilaianContent.innerHTML = '<p class="text-sm text-gray-600">Belum ada penilaian untuk Anda.</p>';
+                        return;
+                    }
+
+                    // Render one or multiple penilaian entries
+                    penilaianContent.innerHTML = data.map(d => {
+                        return `
+                        <div class="border p-4 rounded-md">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-sm text-gray-700 font-medium">${d.nama}</div>
+                                <div class="text-sm text-gray-600">Nilai: <span class="font-semibold">${d.nilai_rata_rata ?? '-'}</span></div>
+                            </div>
+                            <div class="mb-2 text-sm text-gray-700">${d.masukan ? d.masukan : '<span class="text-gray-500">(Tidak ada masukan)</span>'}</div>
+                            <div>${renderFileHtml(d.file_url)}</div>
+                        </div>`;
+                    }).join('<div class="h-2"></div>');
+                })
+                .catch(err => {
+                    console.error(err);
+                    penilaianContent.innerHTML = '<p class="text-sm text-red-500">Terjadi kesalahan saat memuat penilaian.</p>';
+                })
+                .finally(() => {
+                    // Re-enable button (but keep modal open)
+                    btnPenilaian.disabled = false;
+                });
+            });
+        }
+
+        if (btnClosePenilaian) btnClosePenilaian.addEventListener('click', closePenilaian);
+        if (penilaianOverlay) penilaianOverlay.addEventListener('click', closePenilaian);
+
         container.addEventListener("click", (e) => {
-            if (e.target.classList.contains("hapusBaru")) {
-                e.target.closest(".anggota-item").remove();
+            if (e.target.classList.contains("btnHapusAnggota")) {
+                const item = e.target.closest('.anggota-item');
+                const idInput = item.querySelector('input[name$="[id]"]');
+
+                // If anggota has an ID, call server to delete; otherwise just remove from DOM
+                if (idInput && idInput.value) {
+                    const anggotaId = idInput.value;
+                    if (!confirm('Hapus anggota ini?')) return;
+
+                    fetch(`${anggotaBase}/anggota/${anggotaId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                    .then(r => r.json())
+                    .then(json => {
+                        if (json.success) {
+                            item.remove();
+                        } else {
+                            alert(json.message || 'Gagal menghapus anggota.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Terjadi kesalahan saat menghapus anggota.');
+                    });
+                } else {
+                    item.remove();
+                }
             }
         });
     });
+
     </script>
     @endpush
 </x-app-layout>

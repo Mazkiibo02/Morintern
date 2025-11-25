@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PesertaCalon;
 use App\Models\Spesialisasi;
+use App\Models\PenilaianMagang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        $user = Auth::guard('peserta')->user();
+        $user = $this->getAuthenticatedUser();
 
         if (!$user) {
             return response()->json([
@@ -54,7 +55,9 @@ class ProfileController extends Controller
         }
 
     $validated = $request->validate([
-    'nama_lengkap' => 'required|string|max:100',
+    'name' => 'nullable|string|max:100',
+    'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
+    'nama_lengkap' => 'nullable|string|max:100',
     'no_telp' => 'nullable|string|max:20',
     'github' => 'nullable|string|max:255',
     'linkedin' => 'nullable|string|max:255',
@@ -67,9 +70,26 @@ class ProfileController extends Controller
     'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
 ]);
 
-// tambahkan manual email dari user
-$validated['email'] = $user->email;
+// Map 'name' to 'nama_lengkap' for consistency
+if (isset($validated['name']) && !isset($validated['nama_lengkap'])) {
+    $validated['nama_lengkap'] = $validated['name'];
+    unset($validated['name']);
+}
 
+// Ensure nama_lengkap is set
+if (empty($validated['nama_lengkap'])) {
+    $validated['nama_lengkap'] = $user->nama_lengkap ?? $user->name ?? 'User';
+}
+
+// Ensure email is set (allow request email or use current)
+if (empty($validated['email'])) {
+    $validated['email'] = $user->email;
+}
+
+// If email changed and user is web user, reset email_verified_at
+if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
+    $validated['email_verified_at'] = null;
+}
 
         // Handle file uploads
         if ($request->hasFile('cv')) {
@@ -78,6 +98,12 @@ $validated['email'] = $user->email;
 
         if ($request->hasFile('surat')) {
             $validated['surat'] = $request->file('surat')->store('landing/profile', 'public');
+        }
+
+        // For web users (User model), map nama_lengkap to name
+        if (!$user instanceof PesertaCalon && isset($validated['nama_lengkap'])) {
+            $validated['name'] = $validated['nama_lengkap'];
+            unset($validated['nama_lengkap']);
         }
 
         // Update ketua data
@@ -96,25 +122,44 @@ $validated['email'] = $user->email;
                     'github' => 'nullable|string|max:255',
                     'linkedin' => 'nullable|string|max:255',
                     'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+                    'universitas_id' => 'nullable|string|max:255',
+                    'jurusan_id' => 'nullable|string|max:255',
+                    'tanggal_mulai' => 'nullable|date',
+                    'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
                 ])->validate();
+
+                // Prepare fields that should always be linked to ketua (main account)
+                $linked = [
+                    'universitas_id' => $user->universitas_id ?? null,
+                    'jurusan_id' => $user->jurusan_id ?? null,
+                    'tanggal_mulai' => $user->tanggal_mulai ?? null,
+                    'tanggal_selesai' => $user->tanggal_selesai ?? null,
+                    'cv' => $user->cv ?? null,
+                    'surat' => $user->surat ?? null,
+                    'kelompok_id' => $user->kelompok_id ?? null,
+                ];
 
                 if (!empty($anggotaItem['id'])) {
                     $existingAnggota = PesertaCalon::where('ketua_id', $user->id)
                         ->find($anggotaItem['id']);
                     if ($existingAnggota) {
-                        $existingAnggota->update($anggotaValidated);
+                        // Merge validated fields but force linked fields to ketua values
+                        $existingAnggota->update(array_merge($anggotaValidated, $linked));
                     }
                 } else {
+                    // Create anggota without password (password is nullable)
                     PesertaCalon::create(array_merge($anggotaValidated, [
                         'ketua_id' => $user->id,
-                        'kelompok_id' => $user->kelompok_id ?? null,
+                    ], $linked, [
+                        // prefer provided github/linkedin but fallback to ketua
+                        'github' => $anggotaValidated['github'] ?? $user->github ?? null,
+                        'linkedin' => $anggotaValidated['linkedin'] ?? $user->linkedin ?? null,
                     ]));
                 }
             }
         }
 
-    return redirect()->back()->with
-    ('success', 'Profil dan anggota berhasil disimpan.');
+    return redirect()->back()->with('success', 'Profil dan anggota berhasil disimpan.');
     }
 
     /**
@@ -122,13 +167,18 @@ $validated['email'] = $user->email;
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Determine which guard is authenticated
+        $guard = Auth::guard('peserta')->check() ? 'peserta' : 'web';
+        $passwordRule = 'current_password:' . $guard;
+        
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+            'password' => ['required', $passwordRule],
         ]);
 
-        $user = $request->user();
+        // Get user from the appropriate guard
+        $user = Auth::guard('peserta')->check() ? Auth::guard('peserta')->user() : Auth::user();
 
-        Auth::logout();
+        Auth::guard($guard)->logout();
 
         $user->delete();
 
@@ -177,11 +227,28 @@ $validated['email'] = $user->email;
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
             'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+            'universitas_id' => 'nullable|string|max:255',
+            'jurusan_id' => 'nullable|string|max:255',
+            'tanggal_mulai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
         ]);
+
+        // Force linked fields to ketua values so anggota are linked to the ketua's profile
+        $linked = [
+            'universitas_id' => $ketua->universitas_id ?? null,
+            'jurusan_id' => $ketua->jurusan_id ?? null,
+            'tanggal_mulai' => $ketua->tanggal_mulai ?? null,
+            'tanggal_selesai' => $ketua->tanggal_selesai ?? null,
+            'cv' => $ketua->cv ?? null,
+            'surat' => $ketua->surat ?? null,
+            'kelompok_id' => $ketua->kelompok_id ?? null,
+        ];
 
         $anggota = PesertaCalon::create(array_merge($validated, [
             'ketua_id' => $ketua->id,
-            'kelompok_id' => $ketua->kelompok_id ?? null,
+        ], $linked, [
+            'github' => $validated['github'] ?? $ketua->github ?? null,
+            'linkedin' => $validated['linkedin'] ?? $ketua->linkedin ?? null,
         ]));
 
         return response()->json([
@@ -249,7 +316,7 @@ $validated['email'] = $user->email;
 
         $anggota = PesertaCalon::where('ketua_id', $ketua->id)
             ->with('spesialisasi')
-            ->select('id', 'nama_lengkap', 'email', 'no_telp', 'github', 'linkedin', 'spesialisasi_id', 'tanggal_mulai', 'tanggal_selesai')
+            ->select('id', 'nama_lengkap', 'email', 'no_telp', 'github', 'linkedin', 'spesialisasi_id', 'tanggal_mulai', 'tanggal_selesai', 'universitas_id', 'jurusan_id', 'cv', 'surat', 'kelompok_id')
             ->get()
             ->map(function ($a) {
                 return [
@@ -262,12 +329,78 @@ $validated['email'] = $user->email;
                     'spesialisasi' => optional($a->spesialisasi)->nama_spesialisasi ?? '-',
                     'tanggal_mulai' => $a->tanggal_mulai?->format('Y-m-d') ?? '-',
                     'tanggal_selesai' => $a->tanggal_selesai?->format('Y-m-d') ?? '-',
+                    'universitas_id' => $a->universitas_id ?? null,
+                    'jurusan_id' => $a->jurusan_id ?? null,
+                    'cv' => $a->cv ?? null,
+                    'surat' => $a->surat ?? null,
+                    'kelompok_id' => $a->kelompok_id ?? null,
                 ];
             });
 
         return response()->json([
             'success' => true,
             'anggota' => $anggota,
+        ]);
+    }
+
+    /**
+     * Get penilaian (evaluation) for the authenticated user.
+     * Returns JSON with masukan and file URL(s).
+     */
+    public function getPenilaian(Request $request): JsonResponse
+    {
+        $user = $this->getAuthenticatedUser();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User tidak terautentikasi.',
+            ], 401);
+        }
+
+        // Try to match by full name first, fallback to contains
+        $name = $user->nama_lengkap ?? $user->nama ?? null;
+
+        if (!$name) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
+        }
+
+        $records = PenilaianMagang::where('nama', $name)->get();
+
+        if ($records->isEmpty()) {
+            $records = PenilaianMagang::where('nama', 'like', "%{$name}%")->get();
+        }
+
+        // Map records to include accessible file URL when present
+        $data = $records->map(function ($r) {
+            $fileUrl = null;
+            if ($r->file_penilaian) {
+                // Prefer public disk URL if exists
+                if (Storage::disk('public')->exists($r->file_penilaian)) {
+                    $fileUrl = Storage::disk('public')->url($r->file_penilaian);
+                } else {
+                    // fallback: try asset path
+                    $fileUrl = asset('storage/' . ltrim($r->file_penilaian, '/'));
+                }
+            }
+
+            return [
+                'id' => $r->id,
+                'nama' => $r->nama,
+                'nilai_rata_rata' => $r->nilai_rata_rata,
+                'masukan' => $r->masukan,
+                'file_penilaian' => $r->file_penilaian,
+                'file_url' => $fileUrl,
+                'created_at' => $r->created_at?->toDateTimeString(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
         ]);
     }
 
