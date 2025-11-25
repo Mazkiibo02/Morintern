@@ -74,26 +74,9 @@ class ProfileController extends Controller
     'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
 ]);
 
-// Map 'name' to 'nama_lengkap' for consistency
-if (isset($validated['name']) && !isset($validated['nama_lengkap'])) {
-    $validated['nama_lengkap'] = $validated['name'];
-    unset($validated['name']);
-}
+// tambahkan manual email dari user
+$validated['email'] = $user->email;
 
-// Ensure nama_lengkap is set
-if (empty($validated['nama_lengkap'])) {
-    $validated['nama_lengkap'] = $user->nama_lengkap ?? $user->name ?? 'User';
-}
-
-// Ensure email is set (allow request email or use current)
-if (empty($validated['email'])) {
-    $validated['email'] = $user->email;
-}
-
-// If email changed and user is web user, reset email_verified_at
-if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
-    $validated['email_verified_at'] = null;
-}
 
         if ($request->hasFile('cv')) {
             $file = $request->file('cv');
@@ -134,13 +117,6 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             $validated['surat'] = 'surat/' . $filename;
         }
 
-        // For web users (User model), map nama_lengkap to name
-        if (!$user instanceof PesertaCalon && isset($validated['nama_lengkap'])) {
-            $validated['name'] = $validated['nama_lengkap'];
-            unset($validated['nama_lengkap']);
-        }
-
-        // Update ketua data
         $user->update($validated);
 
         // Handle anggota data

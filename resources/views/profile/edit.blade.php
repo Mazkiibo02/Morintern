@@ -25,7 +25,16 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- FORM PROFIL KETUA + ANGGOTA --}}
+<<<<<<< HEAD
+            @php
+                $isPeserta = Auth::guard('peserta')->check();
+                $formAction = $isPeserta ? route('peserta.profil.update') : route('profile.update');
+                $anggotaBase = $isPeserta ? url('/peserta/profil') : url('/profile');
+            @endphp
+            <form id="formProfilKetua" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" 
+=======
             <form id="formProfilKetua" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" 
+>>>>>>> main
                 class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 @csrf
 
@@ -518,20 +527,6 @@
 
             </form>
 
-    <!-- Penilaian Modal -->
-    <div id="penilaianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="penilaianTitle">
-        <div class="absolute inset-0 bg-black/50" id="penilaianOverlay" aria-hidden="true"></div>
-        <div class="relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl p-6 z-10" tabindex="-1">
-            <div class="flex items-start justify-between mb-4">
-                <h3 id="penilaianTitle" class="text-lg font-semibold">Penilaian Magang</h3>
-                <button id="btnClosePenilaian" class="text-gray-500 hover:text-gray-800">Tutup</button>
-            </div>
-            <div id="penilaianContent" class="space-y-4 max-h-[60vh] overflow-auto">
-                <p class="text-sm text-gray-500">Memuat data penilaian...</p>
-            </div>
-        </div>
-    </div>
-
             {{-- SECTION: Daftar Anggota --}}
             <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-10">
                     <div class="flex items-center justify-between mb-6">
@@ -560,6 +555,7 @@
         const btnTambah = document.getElementById("btnTambahAnggota");
         const container = document.getElementById("anggotaContainer");
         const template = document.getElementById("anggotaTemplate").innerHTML;
+        const anggotaBase = "{{ $anggotaBase }}";
         let index = {{ count($anggota) }};
 
         btnTambah.addEventListener("click", () => {
@@ -672,7 +668,7 @@
                     const anggotaId = idInput.value;
                     if (!confirm('Hapus anggota ini?')) return;
 
-                    fetch(`${anggotaBase}/anggota/${anggotaId}`, {
+                    fetch(`/profile/anggota/${anggotaId}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

@@ -22,6 +22,15 @@ return new class extends Migration
             return;
         }
 
+        $driver = DB::getDriverName();
+        
+        if ($driver === 'mysql') {
+            DB::statement("ALTER TABLE `peserta_calon` MODIFY `password` VARCHAR(255) NOT NULL DEFAULT '';");
+        } elseif ($driver === 'pgsql') {
+            DB::statement("ALTER TABLE peserta_calon ALTER COLUMN password SET NOT NULL;");
+        }
+        // SQLite: no action needed
+
         // Revert to NOT NULL with empty string default to avoid errors
         DB::statement("ALTER TABLE `peserta_calon` MODIFY `password` VARCHAR(255) NOT NULL DEFAULT '';");
     }
