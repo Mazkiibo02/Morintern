@@ -2,25 +2,21 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\User;
+use Filament\Panel;
+use Filament\Pages;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
-use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
-use Filament\Widgets;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,27 +28,21 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('MorIntern')
-            ->brandLogo(fn () => view('filament.admin.brand'))
-            ->darkModeBrandLogo(fn () => view('filament.admin.brand'))
             ->colors([
                 'primary' => '#6F8FF9',
             ])
             ->font('Plus Jakarta Sans')
             ->viteTheme('resources/css/filament-custom.css')
-            ->renderHook(
-                PanelsRenderHook::HEAD_START,
-                fn () => Blade::render('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">')
-            )
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
+
+            // Izinkan hanya role 1 & 2
+            // ->authUsing(function (User $user) {
+            //     return $user->isAdminPanelAllowed();
+            // })
+
+            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -64,9 +54,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->plugins([
-                FilamentShieldPlugin::make(),
-            ])
+
             ->authMiddleware([
                 Authenticate::class,
             ]);

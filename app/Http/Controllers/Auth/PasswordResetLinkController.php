@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class PasswordResetLinkController extends Controller
     /**
      * Handle an incoming password reset link request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -29,8 +30,8 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // First attempt: try sending reset link as a Peserta (pesertas broker)
-        $status = Password::broker('pesertas')->sendResetLink(
+        // First attempt: try sending reset link as a Peserta (broker name must match config)
+        $status = Password::broker('peserta_calon')->sendResetLink(
             $request->only('email')
         );
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Peserta;
 
+use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Controller;
 use App\Models\PesertaCalon;
 use Illuminate\Auth\Events\Registered;
@@ -23,13 +24,14 @@ class RegisteredPesertaController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:peserta_calon'],
             'no_telp' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         $peserta = PesertaCalon::create([
             'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            // Let the model hash the password to avoid double-hashing
+            'password' => $request->password,
             'no_telp' => $request->no_telp,
             'github' => '-', // default kosong
             'linkedin' => '-', // default kosong
@@ -45,6 +47,7 @@ class RegisteredPesertaController extends Controller
 
         Auth::guard('peserta')->login($peserta);
 
-        return redirect()->intended('/dashboard');
+        // Redirect to landing page after registration
+        return redirect()->route('landing');
     }
 }

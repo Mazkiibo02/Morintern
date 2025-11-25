@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Peserta;
 
+use Log;
 use App\Http\Controllers\Controller;
 use App\Models\PesertaCalon;
 use Illuminate\Auth\Events\PasswordReset;
@@ -28,7 +29,7 @@ class NewPasswordController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        \Log::info('Password reset attempt for: ' . $request->email);
+        Log::info('Password reset attempt for: ' . $request->email);
         
         $request->validate([
             'token' => ['required'],
@@ -48,7 +49,7 @@ class NewPasswordController extends Controller
             }
         );
 
-        \Log::info('Password reset status: ' . $status);
+        Log::info('Password reset status: ' . $status);
 
         if ($status === Password::PASSWORD_RESET) {
             if (auth('peserta')->check()) {
@@ -56,7 +57,7 @@ class NewPasswordController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
             }
-            return redirect('/login')->with('status', __($status));
+            return redirect('peserta/login')->with('status', __($status));
         }
         
         return back()->withErrors(['email' => [__($status)]]);
