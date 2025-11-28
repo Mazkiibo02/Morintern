@@ -135,15 +135,15 @@
                         @endforeach
                     </select>
                 </div>
-
-                {{-- Tombol Simpan --}}
-                <div class="flex justify-end pt-4 border-t mt-8">
-                    <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                        Simpan 
-                    </button>
-                </div>
-
+                {{-- SECTION: Daftar Anggota (keanggotaan tim) --}}
+                <div class="mt-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">Daftar Anggota</h2>
+                        <button id="btnTambahAnggota" type="button"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            + Tambah Anggota
+                        </button>
+                    </div>
 
                     <div id="anggotaContainer" class="space-y-4">
                         @foreach ($anggota as $i => $a)
@@ -216,68 +216,74 @@
                         @endforeach
                     </div>
 
+                    <template id="anggotaTemplate">
+                        <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
 
-        <template id="anggotaTemplate">
-            <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
+                            <!-- Nama Lengkap -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                                <input type="text" name="anggota[__INDEX__][nama_lengkap]"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            </div>
 
-                <!-- Nama Lengkap -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" name="anggota[__INDEX__][nama_lengkap]"
-                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            <!-- Email -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-1">Email</label>
+                                <input type="email" name="anggota[__INDEX__][email]"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            </div>
+
+                            <!-- No Telepon -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-1">No Telepon</label>
+                                <input type="text" name="anggota[__INDEX__][no_telp]"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            </div>
+
+                            <!-- Spesialisasi -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
+                                <select name="anggota[__INDEX__][spesialisasi_id]"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                                    <option value="">Pilih Spesialisasi</option>
+                                    @foreach ($spesialisasiOptions as $id => $nama)
+                                        <option value="{{ $id }}">{{ $nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Github -->
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-1">GitHub</label>
+                                <input type="text" name="anggota[__INDEX__][github]"
+                                    placeholder="https://github.com/username"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            </div>
+
+                            <!-- LinkedIn -->
+                            <div class="mb-6">
+                                <label class="block text-gray-700 mb-1">LinkedIn</label>
+                                <input type="text" name="anggota[__INDEX__][linkedin]"
+                                    placeholder="https://linkedin.com/in/username"
+                                    class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                            </div>
+
+                            <!-- tombol hapus -->
+                            <button type="button"
+                                class="hapusBaru absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+                                Hapus
+                            </button>
+
+                        </div>
+                    </template>
                 </div>
-
-                <!-- Email -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-1">Email</label>
-                    <input type="email" name="anggota[__INDEX__][email]"
-                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                {{-- Tombol Simpan --}}
+                <div class="flex justify-end pt-4 border-t mt-8">
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Simpan
+                    </button>
                 </div>
-
-                <!-- No Telepon -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-1">No Telepon</label>
-                    <input type="text" name="anggota[__INDEX__][no_telp]"
-                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-                </div>
-
-                <!-- Spesialisasi -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
-                    <select name="anggota[__INDEX__][spesialisasi_id]"
-                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-                        <option value="">Pilih Spesialisasi</option>
-                        @foreach ($spesialisasiOptions as $id => $nama)
-                            <option value="{{ $id }}">{{ $nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-        <!-- Github -->
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-1">GitHub</label>
-            <input type="text" name="anggota[__INDEX__][github]"
-                placeholder="https://github.com/username"
-                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-        </div>
-
-        <!-- LinkedIn -->
-        <div class="mb-6">
-            <label class="block text-gray-700 mb-1">LinkedIn</label>
-            <input type="text" name="anggota[__INDEX__][linkedin]"
-                placeholder="https://linkedin.com/in/username"
-                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-        </div>
-
-        <!-- tombol hapus -->
-        <button type="button"
-            class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
-            Hapus
-        </button>
-
-    </div>
-</template>
-
 
             </form>
 
@@ -295,16 +301,7 @@
         </div>
     </div>
 
-            {{-- SECTION: Daftar Anggota --}}
-            <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-10">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-semibold text-gray-800">Daftar Anggota</h2>
-                        <button id="btnTambahAnggota" type="button"
-                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                            + Tambah Anggota
-                        </button>
-                    </div>
-
+            {{-- SECTION: Hapus Akun --}}
             {{-- SECTION: Hapus Akun --}}
             <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Hapus Akun</h3>
@@ -319,17 +316,20 @@
     {{-- SCRIPT TAMBAH / HAPUS ANGGOTA --}}
     @push('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
         const btnTambah = document.getElementById("btnTambahAnggota");
         const container = document.getElementById("anggotaContainer");
-        const template = document.getElementById("anggotaTemplate").innerHTML;
+        const templateEl = document.getElementById("anggotaTemplate");
+        const template = templateEl ? templateEl.innerHTML : '';
         const anggotaBase = "{{ $anggotaBase }}";
         let index = {{ count($anggota) }};
 
-        btnTambah.addEventListener("click", () => {
-            let html = template.replace(/__INDEX__/g, index++);
-            container.insertAdjacentHTML("beforeend", html);
-        });
+        if (btnTambah && template) {
+            btnTambah.addEventListener("click", () => {
+                let html = template.replace(/__INDEX__/g, index++);
+                container.insertAdjacentHTML("beforeend", html);
+            });
+        }
 
         // Penilaian popup handling
         const btnPenilaian = document.getElementById('btnPenilaian');
@@ -340,14 +340,14 @@
 
         let _penilaianKeyHandler = null;
         function closePenilaian() {
+            if (!penilaianModal) return;
             penilaianModal.classList.add('hidden');
-            penilaianContent.innerHTML = '';
+            if (penilaianContent) penilaianContent.innerHTML = '';
             document.body.classList.remove('overflow-hidden');
             if (typeof _penilaianKeyHandler === 'function') {
                 document.removeEventListener('keydown', _penilaianKeyHandler);
                 _penilaianKeyHandler = null;
             }
-            // restore focus to the Penilaian button
             if (btnPenilaian) btnPenilaian.focus();
             if (btnPenilaian) btnPenilaian.disabled = false;
         }
@@ -359,7 +359,6 @@
             if (imageExt.includes(ext)) {
                 return `<img src="${fileUrl}" alt="Hasil Penilaian" class="max-w-full max-h-96 rounded-md border"/>`;
             }
-            // PDF or others -> provide link
             return `<a href="${fileUrl}" target="_blank" class="text-blue-600 underline">Lihat file penilaian</a>`;
         }
 
@@ -367,15 +366,12 @@
             btnPenilaian.addEventListener('click', (e) => {
                 e.preventDefault();
                 btnPenilaian.disabled = true;
-                penilaianContent.innerHTML = '<p class="text-sm text-gray-500">Memuat data penilaian...</p>';
-                penilaianModal.classList.remove('hidden');
-                // lock body scroll
+                if (penilaianContent) penilaianContent.innerHTML = '<p class="text-sm text-gray-500">Memuat data penilaian...</p>';
+                if (penilaianModal) penilaianModal.classList.remove('hidden');
                 document.body.classList.add('overflow-hidden');
-                // focus the modal container
-                const modalContainer = penilaianModal.querySelector('[tabindex="-1"]');
+                const modalContainer = penilaianModal ? penilaianModal.querySelector('[tabindex="-1"]') : null;
                 if (modalContainer) modalContainer.focus();
 
-                // add key handler to close on Escape
                 _penilaianKeyHandler = function (ev) {
                     if (ev.key === 'Escape' || ev.key === 'Esc') {
                         closePenilaian();
@@ -383,86 +379,78 @@
                 };
                 document.addEventListener('keydown', _penilaianKeyHandler);
 
-                fetch(`${anggotaBase}/penilaian`, {
-                    headers: { 'Accept': 'application/json' }
-                })
+                fetch(`${anggotaBase}/penilaian`, { headers: { 'Accept': 'application/json' } })
                 .then(r => r.json())
                 .then(json => {
                     if (!json.success) {
-                        penilaianContent.innerHTML = `<p class="text-sm text-red-500">${json.message || 'Gagal memuat penilaian.'}</p>`;
+                        if (penilaianContent) penilaianContent.innerHTML = `<p class="text-sm text-red-500">${json.message || 'Gagal memuat penilaian.'}</p>`;
                         return;
                     }
-
                     const data = json.data || [];
                     if (data.length === 0) {
-                        penilaianContent.innerHTML = '<p class="text-sm text-gray-600">Belum ada penilaian untuk Anda.</p>';
+                        if (penilaianContent) penilaianContent.innerHTML = '<p class="text-sm text-gray-600">Belum ada penilaian untuk Anda.</p>';
                         return;
                     }
-
-                    // Render one or multiple penilaian entries
-                    penilaianContent.innerHTML = data.map(d => {
-                        return `
-                        <div class="border p-4 rounded-md">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm text-gray-700 font-medium">${d.nama}</div>
-                                <div class="text-sm text-gray-600">Nilai: <span class="font-semibold">${d.nilai_rata_rata ?? '-'}</span></div>
-                            </div>
-                            <div class="mb-2 text-sm text-gray-700">${d.masukan ? d.masukan : '<span class="text-gray-500">(Tidak ada masukan)</span>'}</div>
-                            <div>${renderFileHtml(d.file_url)}</div>
-                        </div>`;
-                    }).join('<div class="h-2"></div>');
+                    if (penilaianContent) {
+                        penilaianContent.innerHTML = data.map(d => {
+                            return `
+                            <div class="border p-4 rounded-md">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-sm text-gray-700 font-medium">${d.nama}</div>
+                                    <div class="text-sm text-gray-600">Nilai: <span class="font-semibold">${d.nilai_rata_rata ?? '-'}</span></div>
+                                </div>
+                                <div class="mb-2 text-sm text-gray-700">${d.masukan ? d.masukan : '<span class="text-gray-500">(Tidak ada masukan)</span>'}</div>
+                                <div>${renderFileHtml(d.file_url)}</div>
+                            </div>`;
+                        }).join('<div class="h-2"></div>');
+                    }
                 })
                 .catch(err => {
                     console.error(err);
-                    penilaianContent.innerHTML = '<p class="text-sm text-red-500">Terjadi kesalahan saat memuat penilaian.</p>';
+                    if (penilaianContent) penilaianContent.innerHTML = '<p class="text-sm text-red-500">Terjadi kesalahan saat memuat penilaian.</p>';
                 })
-                .finally(() => {
-                    // Re-enable button (but keep modal open)
-                    btnPenilaian.disabled = false;
-                });
+                .finally(() => { btnPenilaian.disabled = false; });
             });
         }
 
         if (btnClosePenilaian) btnClosePenilaian.addEventListener('click', closePenilaian);
         if (penilaianOverlay) penilaianOverlay.addEventListener('click', closePenilaian);
 
-        container.addEventListener("click", (e) => {
-            if (e.target.classList.contains("btnHapusAnggota")) {
-                const item = e.target.closest('.anggota-item');
-                const idInput = item.querySelector('input[name$="[id]"]');
-
-                // If anggota has an ID, call server to delete; otherwise just remove from DOM
-                if (idInput && idInput.value) {
-                    const anggotaId = idInput.value;
-                    if (!confirm('Hapus anggota ini?')) return;
-
-                    fetch(`${anggotaBase}/anggota/${anggotaId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                    })
-                    .then(r => r.json())
-                    .then(json => {
-                        if (json.success) {
-                            item.remove();
-                        } else {
-                            alert(json.message || 'Gagal menghapus anggota.');
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('Terjadi kesalahan saat menghapus anggota.');
-                    });
-                } else {
-                    item.remove();
+        if (container) {
+            container.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.classList.contains('btnHapusAnggota')) {
+                    const item = target.closest('.anggota-item');
+                    if (!item) return;
+                    const idInput = item.querySelector('input[name$="[id]"]');
+                    if (idInput && idInput.value) {
+                        const anggotaId = idInput.value;
+                        if (!confirm('Hapus anggota ini?')) return;
+                        fetch(`${anggotaBase}/anggota/${anggotaId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                        })
+                        .then(r => r.json())
+                        .then(json => {
+                            if (json.success) item.remove();
+                            else alert(json.message || 'Gagal menghapus anggota.');
+                        })
+                        .catch(err => { console.error(err); alert('Terjadi kesalahan saat menghapus anggota.'); });
+                    } else {
+                        item.remove();
+                    }
                 }
-            }
-        });
+                if (target.classList.contains('hapusBaru')) {
+                    const item = target.closest('.anggota-item');
+                    if (item) item.remove();
+                }
+            });
+        }
     });
-
     </script>
     @endpush
 </x-app-layout>

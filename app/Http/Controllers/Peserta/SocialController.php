@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth\Peserta;
+namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
