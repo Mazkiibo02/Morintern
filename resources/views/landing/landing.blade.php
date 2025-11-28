@@ -26,20 +26,18 @@
         </section>
 
         {{-- CTA Section --}}
-        <section id="get-started" 
-           class="py-20 text-center bg-white text-black"
+    <section id="get-started" 
+        class="py-10 text-center bg-white text-black">
 
-            <h2 class="text-3xl font-bold mb-6">Siap Memulai Karier Profesionalmu?</h2>
+        <h2 class="text-2xl font-bold mb-3">
+            Siap Memulai Karier Profesionalmu?
+        </h2>
 
-            <p class="max-w-2xl mx-auto text-lg opacity-90">
-                Daftar sekarang dan bergabung dalam program magang MorIntern untuk mendapatkan pengalaman dunia kerja yang sesungguhnya.
-            </p>
-
-            <a href="{{ route('peserta.register') }}" 
-                class="inline-block mt-8 bg-white text-[#648DDB] px-10 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
-                Daftar Sekarang
-            </a>
-        </section>
+        <p class="max-w-xl mx-auto text-base opacity-90 leading-relaxed">
+            Daftar sekarang dan bergabung dalam program magang MorIntern 
+            untuk mendapatkan pengalaman dunia kerja yang sesungguhnya.
+        </p>
+    </section>
 
         {{-- Footer --}}
         @include('landing.components.footer')
