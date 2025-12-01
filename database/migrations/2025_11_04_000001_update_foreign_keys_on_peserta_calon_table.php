@@ -1,9 +1,9 @@
 <?php
 
-// use Illuminate\Database\Migrations\Migration;
-// use Illuminate\Database\Schema\Blueprint;
-// use Illuminate\Support\Facades\Schema;
-// use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 // return new class extends Migration
 // {
@@ -107,10 +107,10 @@
 
 
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Database\Migrations\Migration;
+// use Illuminate\Database\Schema\Blueprint;
+// use Illuminate\Support\Facades\Schema;
+// use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -134,6 +134,7 @@ return new class extends Migration
                  WHERE TABLE_SCHEMA = DATABASE() 
                  AND TABLE_NAME = 'peserta_calon' 
                  AND CONSTRAINT_TYPE = 'FOREIGN KEY'"
+            );
 
             // Drop existing foreign keys if they exist
             foreach ($foreignKeys as $key) {
@@ -145,10 +146,8 @@ return new class extends Migration
                         // ignore if fails
                     }
                 }
-
             }
         });
-            }
 
         // 🔹 Pastikan tipe kolom sudah sesuai
         Schema::table('peserta_calon', function (Blueprint $table) {
@@ -179,12 +178,7 @@ return new class extends Migration
                     ->nullOnDelete();
             }
         });
-            if (Schema::hasColumn('peserta_calon', 'ketua_id')) {
-                $table->foreign('ketua_id')
-                    ->references('id')
-                    ->on('peserta_calon')
-                    ->nullOnDelete();
-            }
+    }
 
     public function down(): void
     {
@@ -214,4 +208,4 @@ return new class extends Migration
             }
         });
     }
-}
+};
