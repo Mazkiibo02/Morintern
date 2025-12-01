@@ -257,47 +257,47 @@
                     </select>
                 </div>
 
-        <!-- Github -->
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-1">GitHub</label>
-            <input type="text" name="anggota[__INDEX__][github]"
-                placeholder="https://github.com/username"
-                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-        </div>
+                <!-- Github -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-1">GitHub</label>
+                    <input type="text" name="anggota[__INDEX__][github]"
+                        placeholder="https://github.com/username"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
 
-        <!-- LinkedIn -->
-        <div class="mb-6">
-            <label class="block text-gray-700 mb-1">LinkedIn</label>
-            <input type="text" name="anggota[__INDEX__][linkedin]"
-                placeholder="https://linkedin.com/in/username"
-                class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
-        </div>
+                <!-- LinkedIn -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-1">LinkedIn</label>
+                    <input type="text" name="anggota[__INDEX__][linkedin]"
+                        placeholder="https://linkedin.com/in/username"
+                        class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+                </div>
 
-        <!-- tombol hapus -->
-        <button type="button"
-            class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
-            Hapus
-        </button>
+                <!-- tombol hapus -->
+                <button type="button"
+                    class="btnHapusAnggota absolute top-3 right-3 text-red-600 hover:text-red-800 text-sm">
+                    Hapus
+                </button>
 
-    </div>
-</template>
+            </div>
+        </template>
 
 
             </form>
 
-    <!-- Penilaian Modal -->
-    <div id="penilaianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="penilaianTitle">
-        <div class="absolute inset-0 bg-black/50" id="penilaianOverlay" aria-hidden="true"></div>
-        <div class="relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl p-6 z-10" tabindex="-1">
-            <div class="flex items-start justify-between mb-4">
-                <h3 id="penilaianTitle" class="text-lg font-semibold">Penilaian Magang</h3>
-                <button id="btnClosePenilaian" class="text-gray-500 hover:text-gray-800">Tutup</button>
+            <!-- Penilaian Modal -->
+            <div id="penilaianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="penilaianTitle">
+                <div class="absolute inset-0 bg-black/50" id="penilaianOverlay" aria-hidden="true"></div>
+                <div class="relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl p-6 z-10" tabindex="-1">
+                    <div class="flex items-start justify-between mb-4">
+                        <h3 id="penilaianTitle" class="text-lg font-semibold">Penilaian Magang</h3>
+                        <button id="btnClosePenilaian" class="text-gray-500 hover:text-gray-800">Tutup</button>
+                    </div>
+                    <div id="penilaianContent" class="space-y-4 max-h-[60vh] overflow-auto">
+                        <p class="text-sm text-gray-500">Memuat data penilaian...</p>
+                    </div>
+                </div>
             </div>
-            <div id="penilaianContent" class="space-y-4 max-h-[60vh] overflow-auto">
-                <p class="text-sm text-gray-500">Memuat data penilaian...</p>
-            </div>
-        </div>
-    </div>
 
             {{-- SECTION: Daftar Anggota --}}
             <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 mt-10">

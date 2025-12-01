@@ -28,10 +28,10 @@ class LoginController extends Controller
         if (Auth::attempt($request->only('email','password'), $request->filled('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
-            return redirect()->intended('/');
+            return redirect('/admin');
         }
 
-        RateLimiter::hit($throttleKey, 60); // block 60 seconds after failed attempt
+        RateLimiter::hit($throttleKey, 60); // block 60 seconds
         throw ValidationException::withMessages(['email' => 'Invalid credentials.']);
     }
 

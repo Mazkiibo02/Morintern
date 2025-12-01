@@ -50,40 +50,24 @@ Route::middleware(\App\Http\Middleware\AuthAny::class)->group(function () {
     // Password update
     Route::put('password', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])
         ->name('password.update');
-});
+    });
 
-// HRD Dashboard Routes
-Route::prefix('hrd')->middleware('auth:web')->name('hrd.')->group(function () {
-    Route::get('/calon', [App\Http\Controllers\Hrd\PesertaController::class, 'index'])->name('peserta.index');
-    Route::post('/calon/{calon}/approve', [App\Http\Controllers\Hrd\PesertaController::class, 'approve'])->name('peserta.approve');
-    Route::post('/calon/{calon}/reject', [App\Http\Controllers\Hrd\PesertaController::class, 'reject'])->name('peserta.reject');
-});
+    // HRD Dashboard Routes
+    Route::prefix('hrd')->middleware('auth:web')->name('hrd.')->group(function () {
+        Route::get('/calon', [App\Http\Controllers\Hrd\PesertaController::class, 'index'])->name('peserta.index');
+        Route::post('/calon/{calon}/approve', [App\Http\Controllers\Hrd\PesertaController::class, 'approve'])->name('peserta.approve');
+        Route::post('/calon/{calon}/reject', [App\Http\Controllers\Hrd\PesertaController::class, 'reject'])->name('peserta.reject');
+    });
 
+    //  LOGIN DENGAN GOOGLE (HRD / USER UTAMA)
+    Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-
-//  LOGIN DENGAN GOOGLE (HRD / USER UTAMA)
-Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-
-
-//  LOGIN DENGAN GOOGLE (PESERTA)
-Route::prefix('peserta')->name('peserta.')->group(function () {
-    Route::get('/auth/google', [PesertaSocialController::class, 'redirectToGoogle'])->name('google.login');
-    Route::get('/auth/google/callback', [PesertaSocialController::class, 'handleGoogleCallback']);
-});
-
-// Landing pages
-// Route::get('/', function () {
-//     return view('landing.home'); // halaman Home
-// })->name('landing.home');
-
-// Route::get('/tentang', function () {
-//     return view('landing.tentang'); // halaman Tentang
-// })->name('landing.tentang');
-
-// Route::get('/kontak', function () {
-//     return view('landing.kontak'); // halaman Kontak
-// })->name('landing.kontak');
+    //  LOGIN DENGAN GOOGLE (PESERTA)
+    Route::prefix('peserta')->name('peserta.')->group(function () {
+        Route::get('/auth/google', [PesertaSocialController::class, 'redirectToGoogle'])->name('google.login');
+        Route::get('/auth/google/callback', [PesertaSocialController::class, 'handleGoogleCallback']);
+    });
 
 //  ROUTE TAMBAHAN
 require __DIR__ . '/auth.php';
