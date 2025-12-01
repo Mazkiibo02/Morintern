@@ -13,41 +13,44 @@ use Illuminate\Validation\Rules;
 
 class RegisteredPesertaController extends Controller
 {
+    /**
+     * Show register form
+     */
     public function create()
     {
         return view('peserta.auth.register');
     }
 
+    /**
+     * Store new peserta registration
+     */
     public function store(Request $request)
     {
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:peserta_calon'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:peserta_calon,email'],
             'no_telp' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         $peserta = PesertaCalon::create([
             'nama_lengkap' => $request->nama_lengkap,
-            'email' => $request->email,
-            // Let the model hash the password to avoid double-hashing
-            'password' => $request->password,
-            'no_telp' => $request->no_telp,
-            'github' => '-', // default kosong
-            'linkedin' => '-', // default kosong
-            'tanggal_mulai' => now(), // isi tanggal hari ini
-            'tanggal_selesai' => now(), // sementara isi sama
-            'kelompok_id' => 0, // isi angka default
-            'cv' => '-', // placeholder file
-            'surat' => '-', // placeholder file
+            'email'        => $request->email,
+            'password'     => Hash::make($request->password), // pastikan DIHASH
+            'no_telp'      => $request->no_telp,
+            'github'       => '-', 
+            'linkedin'     => '-', 
+            'tanggal_mulai'    => now(),
+            'tanggal_selesai'  => now(),
+            'kelompok_id'      => 0,
+            'cv'               => '-',
+            'surat'            => '-',
         ]);
-
 
         event(new Registered($peserta));
 
-        Auth::guard('peserta')->login($peserta);
-
-        // Redirect to landing page after registration
-        return redirect()->route('landing');
+        return redirect()
+            ->route('peserta.login')
+            ->with('success', 'Pendaftaran berhasil! Silakan login.');
     }
 }
