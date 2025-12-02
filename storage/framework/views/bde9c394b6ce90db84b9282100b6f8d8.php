@@ -73,7 +73,7 @@
                                             </a>
                                         <?php else: ?>
                                             <!-- Kalau belum login → popup manis -->
-                                            <button type="button" onclick="showLoginModal()"
+                                            <button type="button" onclick="showPesertaLogin()"
                                                     class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-bold py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg">
                                                 Daftar Sekarang
                                             </button>
@@ -151,4 +151,4 @@
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.landing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/landing/landing.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.landing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Magang\Morintern\resources\views/landing/landing.blade.php ENDPATH**/ ?>

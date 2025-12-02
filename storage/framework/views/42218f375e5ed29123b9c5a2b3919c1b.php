@@ -121,4 +121,4 @@
     </div>
 
 </header>
-<?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/landing/components/header.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Magang\Morintern\resources\views/landing/components/header.blade.php ENDPATH**/ ?>
