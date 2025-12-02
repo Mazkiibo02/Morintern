@@ -2,107 +2,77 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\URL;
-use App\Notifications\PesertaResetPasswordNotification;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-class PesertaCalon extends Authenticatable
+class PesertaCalon extends Model implements AuthenticatableContract
 {
-    use HasFactory, Notifiable;
+    use Authenticatable,  HasFactory, Notifiable;  // Tambah Notifiable untuk email notif
 
     protected $table = 'peserta_calon';
 
-    protected $with = ['spesialisasi'];
-
     protected $fillable = [
-        'nama_lengkap',
-        'email',
-        'password',
-        'no_telp',
-        'universitas_id',
-        'jurusan_id',
-        'spesialisasi_id',
-        'kelompok_id',
-        'ketua_id',
-        'perusahaan_id',
-        'tanggal_mulai',
-        'tanggal_selesai',
-        'github',
-        'linkedin',
-        'cv',
-        'surat',
-        'status',
-        'google_id',
+        'nama_lengkap', 'email', 'password', 'no_telp', 'universitas_id', 'jurusan_id',
+        'spesialisasi_id', 'kelompok_id', 'ketua_id', 'tanggal_mulai', 'tanggal_selesai',
+        'cv', 'surat', 'status', 'google_id', 'remember_token'
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
     protected $casts = [
-        'tanggal_mulai' => 'date',
-        'tanggal_selesai' => 'date',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    // 🔹 Auto hash password saat diset
-    public function setPasswordAttribute($value)
+    // Method wajib dari Authenticatable contract
+    public function getAuthIdentifierName()
     {
-        if (empty($value)) {
-            return;
-        }
-
-        // If the value looks like an already-hashed password (bcrypt/argon prefixes),
-        // store it as-is. Otherwise, hash it once.
-        if (str_starts_with($value, '$2y$') || str_starts_with($value, '$2a$') || str_starts_with($value, '$argon')) {
-            $this->attributes['password'] = $value;
-            return;
-        }
-
-        $this->attributes['password'] = Hash::make($value);
+        return 'id';
     }
 
-    public function spesialisasi(): BelongsTo
+    public function getAuthIdentifier()
     {
-        return $this->belongsTo(Spesialisasi::class, 'spesialisasi_id');
+        return $this->id;
     }
 
-    public function ketua(): BelongsTo
+    public function getAuthPassword()
     {
-        return $this->belongsTo(Peserta::class, 'ketua_id');
+        return $this->password;
     }
 
-
-
-    // 🔹 Untuk notifikasi reset password
-    public function sendPasswordResetNotification($token)
+    public function getRememberToken()
     {
-        $this->notify(new PesertaResetPasswordNotification($token));
+        return $this->remember_token;
     }
 
-    // 🔹 Fallback getter (biar konsisten dengan model lain)
-    public function getNameAttribute()
+    public function setRememberToken($value)
     {
-        return $this->nama_lengkap;
+        $this->remember_token = $value;
     }
 
-    public function getCvUrlAttribute(): ?string
+    public function getRememberTokenName()
     {
-        if (! $this->cv) {
-            return null;
-        }
-        return URL::temporarySignedRoute('files.calon.cv.download', now()->addMinutes(15), ['calon' => $this->id]);
+        return 'remember_token';
     }
 
-    public function getSuratUrlAttribute(): ?string
+    // Relasi
+    public function spesialisasi()
     {
-        if (! $this->surat) {
-            return null;
-        }
-        return URL::temporarySignedRoute('files.calon.surat.download', now()->addMinutes(15), ['calon' => $this->id]);
+        return $this->belongsTo(Spesialisasi::class);
+    }
+
+    public function anggota()
+    {
+        return $this->hasMany(Anggota::class, 'ketua_id');
+    }
+
+    public function kelompok()
+    {
+        return $this->belongsTo(self::class, 'kelompok_id');
     }
 }

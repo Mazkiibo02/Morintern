@@ -15,9 +15,8 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    //  Display the user's profile form.
+    
     public function edit(Request $request): View
     {
         $user = $this->getAuthenticatedUser();
@@ -40,9 +39,32 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+    public function register(Request $request)
+{
+    $validated = $request->validate([
+        'nama_lengkap' => 'required|string|max:255',
+        'email'        => 'required|email|unique:users,email',
+        'password'     => 'required|min:6',
+    ]);
+
+    // Hash password
+    $validated['password'] = bcrypt($validated['password']);
+
+    // Set role default = peserta (sesuai tabel `role` lokalmu)
+    $validated['role_id'] = 4; // pastikan 4 = peserta
+
+    // Buat user baru
+    $user = User::create([
+        'name'     => $validated['nama_lengkap'],
+        'email'    => $validated['email'],
+        'password' => $validated['password'],
+        'role_id'  => $validated['role_id'],
+    ]);
+
+    return redirect()->route('peserta.login')
+        ->with('success', 'Akun berhasil dibuat. Silakan login.');
+}
+
     public function update(Request $request)
     {
         $user = $this->getAuthenticatedUser();

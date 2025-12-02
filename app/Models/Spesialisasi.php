@@ -2,30 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Spesialisasi extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
-    // Pastikan Laravel tidak mengubah menjadi 'spesialisasis'
-    protected $table = 'spesialisasi';
+    protected $table = 'spesialisasi';  // INI YANG WAJIB ADA!
 
     protected $fillable = [
         'nama_spesialisasi',
-        'deskripsi',
+        'deskripsi'
     ];
 
-    // ✅ Relasi ke tabel calon_pesertas
-    public function calonPesertas(): HasMany
+    public function pesertaCalons()
     {
-        return $this->hasMany(PesertaCalon::class, 'spesialisasi_id');
+        return $this->hasMany(PesertaCalon::class);
     }
 
-    public function pesertas(): HasMany
+    public function postinganMagangs()
     {
-        return $this->hasMany(Peserta::class, 'spesialisasi_id');
+        return $this->hasMany(PostinganMagang::class);
     }
 }
