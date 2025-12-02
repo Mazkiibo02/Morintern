@@ -32,4 +32,4 @@
     </div>
 </body>
 
-</html><?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/layouts/landing.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\Magang\Morintern\resources\views/layouts/landing.blade.php ENDPATH**/ ?>

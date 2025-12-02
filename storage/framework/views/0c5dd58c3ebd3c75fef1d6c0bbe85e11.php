@@ -14,22 +14,22 @@
             <div class="grid grid-cols-2 gap-4 w-[420px]">
 
                 <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-1.jpg') }}"
+                    <img src="<?php echo e(asset('assets/landing/feature-1.jpg')); ?>"
                         class="absolute inset-0 w-full h-full object-cover">
                 </div>
 
                 <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-2.jpg') }}"
+                    <img src="<?php echo e(asset('assets/landing/feature-2.jpg')); ?>"
                         class="absolute inset-0 w-full h-full object-cover">
                 </div>
 
                 <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-3.jpg') }}"
+                    <img src="<?php echo e(asset('assets/landing/feature-3.jpg')); ?>"
                         class="absolute inset-0 w-full h-full object-cover">
                 </div>
 
                 <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-4.jpg') }}"
+                    <img src="<?php echo e(asset('assets/landing/feature-4.jpg')); ?>"
                         class="absolute inset-0 w-full h-full object-cover">
                 </div>
 
@@ -77,3 +77,4 @@
     </div>
     </div>
 </section>
+<?php /**PATH C:\Magang\Morintern\resources\views/landing/components/features.blade.php ENDPATH**/ ?>

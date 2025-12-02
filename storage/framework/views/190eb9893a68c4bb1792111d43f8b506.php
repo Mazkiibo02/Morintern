@@ -35,13 +35,13 @@
         <!-- DATA UNIVERSITAS -->
         <?php
             $universitas = [
-                ['nama' => 'Institut Teknologi Bandung', 'logo' => 'itb.png'],
-                ['nama' => 'Universitas Amikom Yogyakarta', 'logo' => 'amikom.png'],
-                ['nama' => 'Universitas Gadjah Mada', 'logo' => 'ugm.jpg'],
-                ['nama' => 'Universitas Harkat Negeri', 'logo' => 'harkat.png'],
-                ['nama' => 'Universitas Negeri Semarang', 'logo' => 'unesa.jpg'],
-                ['nama' => 'Universitas Diponegoro', 'logo' => 'undip.png'],
-                ['nama' => 'Universitas Indonesia', 'logo' => 'ui.png'],
+                ['nama' => 'ITB', 'logo' => 'itb.png'],
+                ['nama' => 'AMIKOM', 'logo' => 'amikom.png'],
+                ['nama' => 'UGM', 'logo' => 'ugm.jpg'],
+                ['nama' => 'UHN', 'logo' => 'harkat.png'],
+                ['nama' => 'UNNES', 'logo' => 'unesa.jpg'],
+                ['nama' => 'UNDIP', 'logo' => 'undip.png'],
+                ['nama' => 'UI', 'logo' => 'ui.png'],
             ];
         ?>
 
@@ -96,4 +96,4 @@
 
     </div>
 </section>
-<?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/landing/components/mitra.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Magang\Morintern\resources\views/landing/components/mitra.blade.php ENDPATH**/ ?>
