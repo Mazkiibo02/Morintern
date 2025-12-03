@@ -45,9 +45,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        // Redirect admin/user registration to the profile page
-        return redirect()->route('profile.edit');
+        // Jangan auto-login, arahkan user ke login page
+        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan login.');
     }
 }

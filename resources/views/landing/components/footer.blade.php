@@ -85,7 +85,7 @@
         <!-- Bottom Footer -->
         <div>
             <p class="text-sm text-gray-100">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. MorIntern.
+                &copy; {{ date('Y') }} {{ config('app.name') }}. Morbis.id.
             </p>
         </div>
 
