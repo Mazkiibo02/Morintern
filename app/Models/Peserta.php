@@ -24,7 +24,6 @@ class Peserta extends Authenticatable
         'google_id',
         'no_telp',
         'ketua_id',
-        'konten_id',
         'perusahaan_id',
         'tanggal_daftar',
         'status_id',

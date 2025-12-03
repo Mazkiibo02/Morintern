@@ -45,7 +45,7 @@ class RegisteredPesertaController extends Controller
 
         event(new Registered($peserta));
 
-        Auth::guard('peserta')->login($peserta);
+        Auth::guard('peserta_calon')->login($peserta);
 
         // Redirect to landing page after registration
         return redirect()->route('landing');

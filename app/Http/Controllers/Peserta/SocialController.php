@@ -50,8 +50,8 @@ class SocialController extends Controller
             ]);
         }
 
-        // Login via guard peserta
-        Auth::guard('peserta')->login($peserta, true);
+        // Login via guard peserta_calon
+        Auth::guard('peserta_calon')->login($peserta, true);
 
         return redirect()->route('peserta.dashboard');
     }
