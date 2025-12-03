@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PesertaCalon;
 use App\Models\Spesialisasi;
-use App\Models\PenilaianMagang;
+use App\Models\Penilaian;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -344,10 +344,10 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             ]);
         }
 
-        $records = PenilaianMagang::where('nama', $name)->get();
+        $records = Penilaian::where('nama', $name)->get();
 
         if ($records->isEmpty()) {
-            $records = PenilaianMagang::where('nama', 'like', "%{$name}%")->get();
+            $records = Penilaian::where('nama', 'like', "%{$name}%")->get();
         }
 
         // Map records to include accessible file URL when present

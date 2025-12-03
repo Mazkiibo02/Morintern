@@ -9,37 +9,37 @@ use App\Http\Controllers\Peserta\GoogleController;
 
 // Register
 Route::get('/peserta/register', [RegisteredPesertaController::class, 'create'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.register');
 Route::post('/peserta/register', [RegisteredPesertaController::class, 'store'])
-    ->middleware('guest:peserta');  
+    ->middleware('guest:peserta_calon');  
 
 // Login
 Route::get('/peserta/login', [AuthenticatedPesertaController::class, 'create'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.login');
 Route::post('/peserta/login', [AuthenticatedPesertaController::class, 'store'])
-    ->middleware('guest:peserta');
+    ->middleware('guest:peserta_calon');
 
 // Logout
 Route::post('/peserta/logout', [AuthenticatedPesertaController::class, 'destroy'])
-    ->middleware('auth:peserta')
+    ->middleware('auth:peserta_calon')
     ->name('peserta.logout');
 
 // Forgot Password
 Route::get('/peserta/forgot-password', [PasswordResetLinkController::class, 'create'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.password.request');
 Route::post('/peserta/forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.password.email');
 
 // Reset Password
 Route::get('/peserta/reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.password.reset');
 Route::post('/peserta/reset-password', [NewPasswordController::class, 'store'])
-    ->middleware('guest:peserta')
+    ->middleware('guest:peserta_calon')
     ->name('peserta.password.store');
 
 // Google OAuth
@@ -47,7 +47,7 @@ Route::get('/peserta/auth/google', [GoogleController::class, 'redirectToGoogle']
 Route::get('/peserta/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 // Peserta profile alias routes (separate URL)
-Route::middleware('auth:peserta')->group(function () {
+Route::middleware('auth:peserta_calon')->group(function () {
     Route::get('/peserta/profil', [\App\Http\Controllers\ProfileController::class, 'edit'])
         ->name('peserta.profil');
 

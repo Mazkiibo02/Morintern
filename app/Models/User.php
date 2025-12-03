@@ -43,9 +43,7 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
-    // ==============================
     // RELASI
-    // ==============================
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
@@ -56,9 +54,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsTo(Role::class, 'requested_role_id');
     }
 
-    // ==============================
     // ROLE & PERMISSION
-    // ==============================
     public function isSuperAdmin(): bool
     {
         return $this->role_id === 1;
@@ -69,9 +65,7 @@ class User extends Authenticatable implements FilamentUser
         return in_array($this->role_id, [1, 2]);
     }
 
-    // ==============================
     // FILAMENT v4 CONTRACT — INI YANG BIKIN BISA LOGIN KE /admin
-    // ==============================
     public function canAccessPanel(Panel $panel): bool
     {
         // Kalau panelnya "admin", cek role_id 1 atau 2

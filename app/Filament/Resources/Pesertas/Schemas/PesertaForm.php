@@ -26,8 +26,6 @@ class PesertaForm
                     ->tel(),
                 TextInput::make('ketua_id')
                     ->numeric(),
-                TextInput::make('konten_id')
-                    ->numeric(),
                 TextInput::make('perusahaan_id')
                     ->numeric(),
                 DateTimePicker::make('tanggal_daftar'),

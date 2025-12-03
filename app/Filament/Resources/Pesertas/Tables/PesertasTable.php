@@ -27,9 +27,6 @@ class PesertasTable
                 TextColumn::make('ketua_id')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('konten_id')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('perusahaan_id')
                     ->numeric()
                     ->sortable(),

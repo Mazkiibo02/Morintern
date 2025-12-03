@@ -73,7 +73,7 @@
                                             </a>
                                         <?php else: ?>
                                             <!-- Kalau belum login → popup manis -->
-                                            <button type="button" onclick="showLoginModal()"
+                                            <button type="button" onclick="showPesertaLogin()"
                                                     class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-bold py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg">
                                                 Daftar Sekarang
                                             </button>

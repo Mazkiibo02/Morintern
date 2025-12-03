@@ -21,9 +21,6 @@ class PesertaInfolist
                 TextEntry::make('ketua_id')
                     ->numeric()
                     ->placeholder('-'),
-                TextEntry::make('konten_id')
-                    ->numeric()
-                    ->placeholder('-'),
                 TextEntry::make('perusahaan_id')
                     ->numeric()
                     ->placeholder('-'),

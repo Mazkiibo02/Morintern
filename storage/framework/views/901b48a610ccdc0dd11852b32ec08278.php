@@ -2,7 +2,7 @@
 <?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
 
 $__newAttributes = [];
-$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['field','class']));
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['field','inlineLabelVerticalAlignment']));
 
 foreach ($attributes->all() as $__key => $__value) {
     if (in_array($__key, $__propNames)) {
@@ -17,7 +17,7 @@ $attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
 unset($__propNames);
 unset($__newAttributes);
 
-foreach (array_filter((['field','class']), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+foreach (array_filter((['field','inlineLabelVerticalAlignment']), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 }
 
@@ -30,15 +30,15 @@ foreach ($attributes->all() as $__key => $__value) {
 unset($__defined_vars, $__key, $__value); ?>
 <?php if (isset($component)) { $__componentOriginala86dcd7e3fb4428c61bb5e13aa161d28 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala86dcd7e3fb4428c61bb5e13aa161d28 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'filament-forms::components.field-wrapper','data' => ['field' => $field,'class' => $class]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'filament-forms::components.field-wrapper','data' => ['field' => $field,'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('filament-forms::field-wrapper'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['field' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($field),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($class)]); ?>
-
+<?php $component->withAttributes(['field' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($field),'inline-label-vertical-alignment' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($inlineLabelVerticalAlignment)]); ?>
+ <?php $__env->slot('labelPrefix', null, []); ?> <?php echo e($labelPrefix); ?> <?php $__env->endSlot(); ?>
 <?php echo e($slot ?? ""); ?>
 
  <?php echo $__env->renderComponent(); ?>
@@ -50,4 +50,4 @@ unset($__defined_vars, $__key, $__value); ?>
 <?php if (isset($__componentOriginala86dcd7e3fb4428c61bb5e13aa161d28)): ?>
 <?php $component = $__componentOriginala86dcd7e3fb4428c61bb5e13aa161d28; ?>
 <?php unset($__componentOriginala86dcd7e3fb4428c61bb5e13aa161d28); ?>
-<?php endif; ?><?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\storage\framework\views/68f47f66e70b2e3ce46d62572c8b8660.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\storage\framework\views/9b0aa906eb507785d5e713f2ff316d37.blade.php ENDPATH**/ ?>

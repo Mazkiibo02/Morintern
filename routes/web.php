@@ -14,7 +14,7 @@ Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 //  DASHBOARD (HRD & PESERTA)
 Route::get('/dashboard', function () {
-    if (Auth::guard('web')->check() || Auth::guard('peserta')->check()) {
+    if (Auth::guard('web')->check() || Auth::guard('peserta_calon')->check()) {
         return view('dashboard');
     }
     return redirect()->route('login');
