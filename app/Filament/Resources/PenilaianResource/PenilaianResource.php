@@ -17,6 +17,9 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+;use Filament\Forms\Components\Textarea;
 
 class PenilaianResource extends Resource
 {
@@ -65,4 +68,5 @@ class PenilaianResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
 }

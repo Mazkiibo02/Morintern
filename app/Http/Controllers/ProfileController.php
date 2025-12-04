@@ -76,21 +76,21 @@ class ProfileController extends Controller
             ], 401);
         }
 
-    $validated = $request->validate([
-    'name' => 'nullable|string|max:100',
-    'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
-    'nama_lengkap' => 'nullable|string|max:100',
-    'no_telp' => 'nullable|string|max:20',
-    'github' => 'nullable|string|max:255',
-    'linkedin' => 'nullable|string|max:255',
-    'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
-    'universitas_id' => 'nullable|string|max:255',
-    'jurusan_id' => 'nullable|string|max:255',
-    'tanggal_mulai' => 'nullable|date',
-    'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-    'cv' => 'nullable|file|mimes:zip|max:10240',
-    'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-]);
+        $validated = $request->validate([
+        'name' => 'nullable|string|max:100',
+        'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
+        'nama_lengkap' => 'nullable|string|max:100',
+        'no_telp' => 'nullable|string|max:20',
+        'github' => 'nullable|string|max:255',
+        'linkedin' => 'nullable|string|max:255',
+        'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+        'universitas_id' => 'nullable|string|max:255',
+        'jurusan_id' => 'nullable|string|max:255',
+        'tanggal_mulai' => 'nullable|date',
+        'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+        'cv' => 'nullable|file|mimes:pdf|max:10240',     // PDF, max 10MB
+        'surat' => 'nullable|file|mimes:pdf|max:10240',  // PDF, max 10MB
+    ]);
 
 // Map 'name' to 'nama_lengkap' for consistency
 if (isset($validated['name']) && !isset($validated['nama_lengkap'])) {
@@ -396,4 +396,9 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
         return Auth::check() ? 'web' : (Auth::guard('peserta')->check() ? 'peserta' : null);
     }
 
+    public function show()
+    {
+        $peserta = Auth::guard('peserta')->user();
+        return view('profile.edit'); //  partials/profile-peserta.blade.php
+    }
 }

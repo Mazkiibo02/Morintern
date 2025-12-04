@@ -101,4 +101,9 @@ class Peserta extends Authenticatable
         'tanggal_selesai' => 'date',
         'tanggal_daftar' => 'date',
     ];
+
+    public function penilaian()
+    {
+        return $this->hasOne(Penilaian::class);
+    }
 }
