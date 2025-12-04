@@ -1,34 +1,32 @@
-@extends('layouts.landing')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="min-h-screen bg-white">
-    {{-- Header --}}
-    @include('landing.components.header')
+    
+    <?php echo $__env->make('landing.components.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
     <main>
-        @if(session('just_logged_in'))
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('just_logged_in')): ?>
         <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
                 <h3 class="text-xl font-semibold text-gray-800">Anda sudah masuk!</h3>
                 <p class="mt-2 text-gray-600">Selamat datang di MORIntern.</p>
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('peserta.profil') }}" class="px-4 py-2 bg-[#648DDB] hover:bg-[#527BC8] text-white rounded-lg">Profil Peserta</a>
-                    <a href="{{ route('landing') }}" class="px-4 py-2 border border-gray-300 rounded-lg">Tutup</a>
+                    <a href="<?php echo e(route('peserta.profil')); ?>" class="px-4 py-2 bg-[#648DDB] hover:bg-[#527BC8] text-white rounded-lg">Profil Peserta</a>
+                    <a href="<?php echo e(route('landing')); ?>" class="px-4 py-2 border border-gray-300 rounded-lg">Tutup</a>
                 </div>
             </div>
         </div>
-        @endif
-        @include('landing.components.hero')
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+        <?php echo $__env->make('landing.components.hero', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-        {{-- Features / Program Section --}}
+        
         <section class="py-16 md:py-20 bg-white">
-            @include('landing.components.features')
+            <?php echo $__env->make('landing.components.features', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </section>
 
-        {{-- Perguruan Tinggi Mitra --}}
-        @include('landing.components.mitra')
+        
+        <?php echo $__env->make('landing.components.mitra', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-        {{-- Job Section --}}
+        
         <section class="py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12 md:mb-16">
@@ -40,74 +38,78 @@
                     </p>
                 </div>
 
-                @if($postingans->count() > 0)
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($postingans->count() > 0): ?>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
-                        @foreach($postingans as $post)
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $postingans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $post): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
-                                {{-- Card Header --}}
+                                
                                 <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 md:p-8 text-white">
                                     <h3 class="text-xl md:text-2xl font-bold mb-3 line-clamp-2">
-                                        {{ $post->judul_posisi }}
+                                        <?php echo e($post->judul_posisi); ?>
+
                                     </h3>
                                     <div class="flex items-center gap-2">
                                         <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                         </svg>
                                         <span class="text-indigo-100 font-medium truncate">
-                                            {{ $post->spesialisasi?->nama_spesialisasi ?? 'Umum' }}
+                                            <?php echo e($post->spesialisasi?->nama_spesialisasi ?? 'Umum'); ?>
+
                                         </span>
                                     </div>
                                 </div>
 
-                                {{-- Card Body --}}
+                                
                                 <div class="p-6 md:p-8">
                                     <p class="text-gray-700 mb-6 line-clamp-3 leading-relaxed">
-                                        {{ Str::limit($post->deskripsi, 120) }}
+                                        <?php echo e(Str::limit($post->deskripsi, 120)); ?>
+
                                     </p>
 
-                                    {{-- Stats --}}
+                                    
                                     <div class="grid grid-cols-2 gap-3 md:gap-4 mb-6">
                                         <div class="bg-gray-50 rounded-xl p-4 text-center">
                                             <p class="text-sm text-gray-600 mb-1">Kuota</p>
                                             <p class="text-2xl md:text-3xl font-bold text-indigo-600">
-                                                {{ $post->kuota }}
+                                                <?php echo e($post->kuota); ?>
+
                                             </p>
                                         </div>
                                         <div class="bg-gray-50 rounded-xl p-4 text-center">
                                             <p class="text-sm text-gray-600 mb-1">Durasi</p>
                                             <p class="text-2xl md:text-3xl font-bold text-purple-600">
-                                                {{ $post->durasi }} bulan
+                                                <?php echo e($post->durasi); ?> bulan
                                             </p>
                                         </div>
                                     </div>
 
-                                    {{-- Action Button --}}
+                                    
                                     <div class="mt-6">
-                                        @auth('peserta_calon')
-                                            {{-- Jika sudah login --}}
-                                            <form action="{{ route('peserta.promosi') }}" method="POST" class="w-full">
-                                                @csrf
-                                                <input type="hidden" name="postingan_id" value="{{ $post->id }}">
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard('peserta_calon')->check()): ?>
+                                            
+                                            <form action="<?php echo e(route('peserta.promosi')); ?>" method="POST" class="w-full">
+                                                <?php echo csrf_field(); ?>
+                                                <input type="hidden" name="postingan_id" value="<?php echo e($post->id); ?>">
                                                 <button type="submit"
                                                         class="block w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-semibold py-3 md:py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg text-center">
                                                     Lamar Sekarang
                                                 </button>
                                             </form>
-                                        @else
-                                            {{-- Jika belum login --}}
+                                        <?php else: ?>
+                                            
                                             <button type="button" 
                                                     onclick="showLoginModal()"
                                                     class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-semibold py-3 md:py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg">
                                                 Daftar untuk Melamar
                                             </button>
-                                        @endauth
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
-                @else
-                    {{-- Empty State --}}
+                <?php else: ?>
+                    
                     <div class="text-center py-12 md:py-20">
                         <div class="inline-flex items-center justify-center w-24 h-24 md:w-32 md:h-32 bg-gray-100 rounded-full mb-6 md:mb-8">
                             <svg class="w-12 h-12 md:w-16 md:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,11 +123,11 @@
                             Lowongan magang akan segera dibuka. Pantau terus halaman ini!
                         </p>
                     </div>
-                @endif
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
         </section>
 
-        {{-- CTA Section --}}
+        
         <section class="py-12 md:py-16 bg-white">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
@@ -135,7 +137,7 @@
                     Daftar sekarang dan bergabung dalam program magang untuk mendapatkan pengalaman dunia kerja yang sesungguhnya.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('peserta.register') }}"
+                    <a href="<?php echo e(route('peserta.register')); ?>"
                        class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-md">
                         Daftar Sekarang
                     </a>
@@ -147,15 +149,15 @@
             </div>
         </section>
 
-        {{-- Footer --}}
-        @include('landing.components.footer')
+        
+        <?php echo $__env->make('landing.components.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </main>
 
-    {{-- Login Modal --}}
+    
     <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto animate-fade-in">
             <div class="p-6 md:p-8">
-                {{-- Modal Header --}}
+                
                 <div class="text-center mb-6">
                     <div class="w-16 h-16 md:w-20 md:h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 md:w-10 md:h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,13 +172,13 @@
                     </p>
                 </div>
 
-                {{-- Modal Actions --}}
+                
                 <div class="space-y-4">
-                    <a href="{{ route('peserta.login') }}"
+                    <a href="<?php echo e(route('peserta.login')); ?>"
                        class="block w-full bg-indigo-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
                         Login sebagai Peserta
                     </a>
-                    <a href="{{ route('peserta.register') }}"
+                    <a href="<?php echo e(route('peserta.register')); ?>"
                        class="block w-full border-2 border-indigo-600 text-indigo-600 text-center py-3 rounded-lg font-semibold hover:bg-indigo-50 transition">
                         Daftar Akun Baru
                     </a>
@@ -190,7 +192,7 @@
     </div>
 </div>
 
-{{-- JavaScript --}}
+
 <script>
     function showLoginModal() {
         const modal = document.getElementById('loginModal');
@@ -221,7 +223,7 @@
     });
 </script>
 
-{{-- Add CSS animation --}}
+
 <style>
     @keyframes fade-in {
         from { opacity: 0; transform: scale(0.95); }
@@ -231,4 +233,5 @@
         animation: fade-in 0.2s ease-out;
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.landing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/landing/landing.blade.php ENDPATH**/ ?>

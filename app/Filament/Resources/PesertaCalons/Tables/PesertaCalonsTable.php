@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -16,63 +17,70 @@ class PesertaCalonsTable
         return $table
             ->columns([
                 TextColumn::make('nama_lengkap')
-                    ->searchable(),
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->searchable(),
+
                 TextColumn::make('no_telp')
+                    ->label('No Telepon')
                     ->searchable(),
-                TextColumn::make('universitas_id')
-                    ->searchable(),
-                TextColumn::make('jurusan_id')
-                    ->searchable(),
-                TextColumn::make('spesialisasi.id')
-                    ->searchable(),
-                TextColumn::make('kelompok_id')
-                    ->numeric()
+
+                TextColumn::make('spesialisasi.nama_spesialisasi')
+                    ->label('Spesialisasi')
+                    ->badge()
                     ->sortable(),
-                TextColumn::make('ketua.id')
-                    ->searchable(),
-                TextColumn::make('perusahaan_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('tanggal_mulai')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('tanggal_selesai')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('github')
-                    ->searchable(),
-                TextColumn::make('linkedin')
-                    ->searchable(),
-                TextColumn::make('cv')
-                    ->searchable(),
-                TextColumn::make('surat')
-                    ->searchable(),
+
                 TextColumn::make('status')
-                    ->badge(),
-                TextColumn::make('google_id')
-                    ->searchable(),
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'info'    => 'menunggu',
+                        'primary' => 'mendaftar',
+                        'success' => 'diterima',
+                        'danger'  => 'ditolak',
+                    ])
+                    ->sortable(),
+
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Tanggal Daftar')
+                    ->date()
+                    ->sortable(),
             ])
-            ->filters([
-                //
-            ])
+
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+
+                    BulkAction::make('accept')
+                        ->label('Terima Peserta Terpilih')
+                        ->icon('heroicon-o-check')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            foreach ($records as $record) {
+                                $record->update(['status' => 'diterima']);
+                            }
+                        }),
+
+                    BulkAction::make('reject')
+                        ->label('Tolak Peserta Terpilih')
+                        ->icon('heroicon-o-x-mark')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            foreach ($records as $record) {
+                                $record->update(['status' => 'ditolak']);
+                            }
+                        }),
                 ]),
             ]);
     }

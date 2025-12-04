@@ -35,6 +35,7 @@ class AuthenticatedPesertaController extends Controller
         if (Auth::guard('peserta_calon')->attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
+            $request->session()->flash('just_logged_in', true);
             return redirect()->route('landing');
         }
 
@@ -50,6 +51,6 @@ class AuthenticatedPesertaController extends Controller
         Auth::guard('peserta_calon')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect()->route('landing');
     }
 }

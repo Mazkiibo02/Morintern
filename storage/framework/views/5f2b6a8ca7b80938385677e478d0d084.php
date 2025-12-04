@@ -1,1 +1,0 @@
-<?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views\layouts\landing-layout.blade.php ENDPATH**/ ?>

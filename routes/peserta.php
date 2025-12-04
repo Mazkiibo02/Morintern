@@ -68,3 +68,7 @@ Route::middleware('auth:peserta_calon')->group(function () {
     Route::get('/peserta/profil/penilaian', [\App\Http\Controllers\ProfileController::class, 'getPenilaian'])
         ->name('peserta.profil.penilaian');
 });
+
+Route::post('/peserta/promosi', function (\Illuminate\Http\Request $request) {
+    return redirect()->route('peserta.profil')->with('success', 'Lamaran terkirim. Silakan lengkapi profil.');
+})->middleware('auth:peserta_calon')->name('peserta.promosi');

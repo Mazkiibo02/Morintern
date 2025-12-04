@@ -27,6 +27,8 @@ class PesertaCalon extends Model implements AuthenticatableContract
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
     ];
 
     // Method wajib dari Authenticatable contract

@@ -24,7 +24,7 @@ class ProfileController extends Controller
         
         // Get anggota if user is peserta (ketua)
         $anggota = [];
-        if (Auth::guard('peserta')->check()) {
+        if (Auth::guard('peserta_calon')->check()) {
             $anggota = PesertaCalon::where('ketua_id', $user->id)->get();
         }
 
@@ -192,7 +192,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function updateProfileData(Request $request): JsonResponse
     {
-        $user = Auth::guard('peserta')->user();
+        $user = Auth::guard('peserta_calon')->user();
 
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
@@ -216,7 +216,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function storeAnggota(Request $request): JsonResponse
     {
-        $ketua = Auth::guard('peserta')->user();
+        $ketua = Auth::guard('peserta_calon')->user();
 
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
@@ -253,7 +253,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
     public function destroyAnggota(int $id): JsonResponse
     {
         try {
-            $ketua = Auth::guard('peserta')->user() ?? Auth::user();
+            $ketua = Auth::guard('peserta_calon')->user() ?? Auth::user();
 
             if (!$ketua) {
                 return response()->json([
@@ -293,7 +293,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function getAnggota(Request $request): JsonResponse
     {
-        $ketua = Auth::guard('peserta')->user();
+        $ketua = Auth::guard('peserta_calon')->user();
 
         $anggota = PesertaCalon::where('ketua_id', $ketua->id)
             ->with('spesialisasi')
@@ -385,7 +385,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     private function getAuthenticatedUser()
     {
-        return Auth::check() ? Auth::user() : Auth::guard('peserta')->user();
+        return Auth::check() ? Auth::user() : (Auth::guard('peserta_calon')->user() ?? Auth::guard('peserta')->user());
     }
 
     /**
@@ -393,12 +393,12 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     private function getActiveGuard(): ?string
     {
-        return Auth::check() ? 'web' : (Auth::guard('peserta')->check() ? 'peserta' : null);
+        return Auth::check() ? 'web' : (Auth::guard('peserta_calon')->check() ? 'peserta_calon' : (Auth::guard('peserta')->check() ? 'peserta' : null));
     }
 
     public function show()
     {
-        $peserta = Auth::guard('peserta')->user();
+        $peserta = Auth::guard('peserta_calon')->user();
         return view('profile.edit'); //  partials/profile-peserta.blade.php
     }
 }
