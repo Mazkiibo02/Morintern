@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Peserta;
 
 class PesertaCalon extends Model implements AuthenticatableContract
 {
@@ -76,5 +77,45 @@ class PesertaCalon extends Model implements AuthenticatableContract
     public function kelompok()
     {
         return $this->belongsTo(self::class, 'kelompok_id');
+    }
+
+    protected static function booted()
+    {
+        static::saved(function (self $calon) {
+            if (! $calon->wasChanged('status')) {
+                return;
+            }
+            $status = strtolower((string) $calon->status);
+            if (! in_array($status, ['accepted', 'diterima'])) {
+                return;
+            }
+
+            $data = [
+                'nama_lengkap' => $calon->nama_lengkap,
+                'email' => $calon->email,
+                'password' => $calon->password ?: \Illuminate\Support\Str::random(16),
+                'google_id' => $calon->google_id,
+                'no_telp' => $calon->no_telp,
+                'ketua_id' => $calon->ketua_id,
+                'perusahaan_id' => $calon->perusahaan_id,
+                'kelompok_id' => $calon->kelompok_id,
+                'universitas' => (string) $calon->universitas_id,
+                'jurusan' => (string) $calon->jurusan_id,
+                'github' => $calon->github,
+                'linkedin' => $calon->linkedin,
+                'cv' => $calon->cv,
+                'surat' => $calon->surat,
+                'tanggal_daftar' => now(),
+            ];
+
+            $existing = Peserta::where('email', $calon->email)->first();
+            if ($existing) {
+                $existing->update($data);
+            } else {
+                Peserta::create($data);
+            }
+
+            $calon->delete();
+        });
     }
 }

@@ -4,7 +4,7 @@
     <?php echo $__env->make('landing.components.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
     <main>
-        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('just_logged_in')): ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('just_logged_in') || session('already_logged_in')): ?>
         <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
                 <h3 class="text-xl font-semibold text-gray-800">Anda sudah masuk!</h3>

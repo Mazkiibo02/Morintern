@@ -6,7 +6,7 @@
     @include('landing.components.header')
 
     <main>
-        @if(session('just_logged_in'))
+        @if(session('just_logged_in') || session('already_logged_in'))
         <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
                 <h3 class="text-xl font-semibold text-gray-800">Anda sudah masuk!</h3>

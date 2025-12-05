@@ -1,36 +1,45 @@
-<x-app-layout>
-    {{-- Background --}}
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+    
     <div class="fixed inset-0 -z-10 overflow-hidden w-full h-full">
         <img 
-            src="{{ asset('assets/profile/gelombang-profile.svg') }}" 
+            src="<?php echo e(asset('assets/profile/gelombang-profile.svg')); ?>" 
             alt="background waves" 
             class="absolute top-0 right-0 w-[600px] opacity-60 rotate-180 md:rotate-0 object-cover"
         >
         <img 
-            src="{{ asset('assets/profile/gelombang-profile.svg') }}" 
+            src="<?php echo e(asset('assets/profile/gelombang-profile.svg')); ?>" 
             alt="background waves bottom" 
             class="absolute bottom-0 left-0 w-[600px] opacity-60 md:rotate-180 object-cover"
         >
     </div>
 
-    {{-- Header --}}
+    
   
 
-    {{-- Konten --}}
+    
     <div class="py-12 relative z-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- FORM PROFIL KETUA + ANGGOTA --}}
-            @php
+            
+            <?php
                 $isPeserta = Auth::guard('peserta_calon')->check();
                 $formAction = $isPeserta ? route('peserta.profil.update') : route('profile.update');
                 $anggotaBase = $isPeserta ? url('/peserta/profil') : url('/profile');
-            @endphp
-            <form id="formProfilKetua" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" 
+            ?>
+            <form id="formProfilKetua" method="POST" action="<?php echo e($formAction); ?>" enctype="multipart/form-data" 
                 class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
-                @csrf
+                <?php echo csrf_field(); ?>
 
-                {{-- Header --}}
+                
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-lg font-semibold text-gray-800">Profil Magang</h2>
                     <button id="btnPenilaian" type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
@@ -38,104 +47,105 @@
                     </button>
                 </div>
 
-                {{-- Nama Lengkap --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap ?? '') }}"
+                    <input type="text" name="nama_lengkap" value="<?php echo e(old('nama_lengkap', $user->nama_lengkap ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- Asal Univ --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Asal Univ</label>
-                    <input type="text" name="universitas_id" value="{{ old('universitas_id', $user->universitas_id ?? '') }}"
+                    <input type="text" name="universitas_id" value="<?php echo e(old('universitas_id', $user->universitas_id ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- Jurusan --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Jurusan</label>
-                    <input type="text" name="jurusan_id" value="{{ old('jurusan_id', $user->jurusan_id ?? '') }}"
+                    <input type="text" name="jurusan_id" value="<?php echo e(old('jurusan_id', $user->jurusan_id ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- No Telepon --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">No Telepon</label>
-                    <input type="text" name="no_telp" value="{{ old('no_telp', $user->no_telp ?? '') }}"
+                    <input type="text" name="no_telp" value="<?php echo e(old('no_telp', $user->no_telp ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- Email --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Email</label>
-                    <input type="email" disabled value="{{ $user->email ?? '' }}"
+                    <input type="email" disabled value="<?php echo e($user->email ?? ''); ?>"
                         class="col-span-2 bg-gray-100 border border-gray-300 rounded-md px-3 py-2 cursor-not-allowed">
                 </div>
 
-                {{-- Link Github --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Link Github</label>
-                    <input type="text" name="github" value="{{ old('github', $user->github ?? '') }}"
+                    <input type="text" name="github" value="<?php echo e(old('github', $user->github ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- LinkedIn --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">LinkedIn</label>
-                    <input type="text" name="linkedin" value="{{ old('linkedin', $user->linkedin ?? '') }}"
+                    <input type="text" name="linkedin" value="<?php echo e(old('linkedin', $user->linkedin ?? '')); ?>"
                         class="col-span-2 border border-blue-300 rounded-md focus:ring focus:ring-blue-200 px-3 py-2">
                 </div>
 
-                {{-- Tanggal Mulai & Selesai --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Tanggal Mulai &<br>Tanggal Selesai</label>
                     <div class="col-span-2 flex items-center gap-2">
                         <input type="date" name="tanggal_mulai" class="border border-blue-300 rounded-md px-3 py-2 flex-1"
-                            value="{{ old('tanggal_mulai', $user->tanggal_mulai?->format('Y-m-d')) }}">
+                            value="<?php echo e(old('tanggal_mulai', $user->tanggal_mulai?->format('Y-m-d'))); ?>">
                         <span class="text-gray-600">s/d</span>
                         <input type="date" name="tanggal_selesai" class="border border-blue-300 rounded-md px-3 py-2 flex-1"
-                            value="{{ old('tanggal_selesai', $user->tanggal_selesai?->format('Y-m-d')) }}">
+                            value="<?php echo e(old('tanggal_selesai', $user->tanggal_selesai?->format('Y-m-d'))); ?>">
                     </div>
                 </div>
 
-                {{-- CV --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">CV</label>
                     <div class="col-span-2">
                         <input type="file" name="cv" accept=".zip"
                             class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
-                        @if($user->cv ?? false)
-                            <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->cv) }}</p>
-                        @endif
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($user->cv ?? false): ?>
+                            <p class="text-sm text-gray-500 mt-1">File saat ini: <?php echo e(basename($user->cv)); ?></p>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                 </div>
 
-                {{-- Surat Lamaran --}}
+                
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Surat Lamaran</label>
                     <div class="col-span-2">
                         <input type="file" name="surat" accept=".jpg,.jpeg,.png"
                             class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
-                        @if($user->surat ?? false)
-                            <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->surat) }}</p>
-                        @endif
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($user->surat ?? false): ?>
+                            <p class="text-sm text-gray-500 mt-1">File saat ini: <?php echo e(basename($user->surat)); ?></p>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                 </div>
 
-                {{-- Spesialisasi --}}
+                
                 <div class="mb-6 grid grid-cols-3 gap-4 items-center">
                     <label class="text-gray-700 text-right">Spesialisasi Magang</label>
                     <select name="spesialisasi_id" class="col-span-2 border border-blue-300 rounded-md px-3 py-2">
                         <option value="">-Silahkan Pilih-</option>
-                        @foreach($spesialisasiOptions as $id => $nama)
-                            <option value="{{ $id }}" {{ ($user->spesialisasi_id ?? '') == $id ? 'selected' : '' }}>
-                                {{ $nama }}
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $spesialisasiOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $nama): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($id); ?>" <?php echo e(($user->spesialisasi_id ?? '') == $id ? 'selected' : ''); ?>>
+                                <?php echo e($nama); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </select>
                 </div>
-                {{-- SECTION: Daftar Anggota (keanggotaan tim) --}}
+                
                 <div class="mt-10">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-lg font-semibold text-gray-800">Daftar Anggota</h2>
@@ -146,65 +156,66 @@
                     </div>
 
                     <div id="anggotaContainer" class="space-y-4">
-                        @foreach ($anggota as $i => $a)
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $anggota; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $a): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
 
                                 <!-- Nama Lengkap -->
                                 <div class="mb-4">
                                     <label class="block text-gray-700 mb-1">Nama Lengkap</label>
-                                    <input type="text" name="anggota[{{ $i }}][nama_lengkap]" 
-                                        value="{{ $a->nama_lengkap }}"
+                                    <input type="text" name="anggota[<?php echo e($i); ?>][nama_lengkap]" 
+                                        value="<?php echo e($a->nama_lengkap); ?>"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-4">
                                     <label class="block text-gray-700 mb-1">Email</label>
-                                    <input type="email" name="anggota[{{ $i }}][email]" 
-                                        value="{{ $a->email }}"
+                                    <input type="email" name="anggota[<?php echo e($i); ?>][email]" 
+                                        value="<?php echo e($a->email); ?>"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                 </div>
 
                                 <!-- No Telepon -->
                                 <div class="mb-4">
                                     <label class="block text-gray-700 mb-1">No Telepon</label>
-                                        <input type="text" name="anggota[{{ $i }}][no_telp]"
-                                        value="{{ $a->no_telp }}"
+                                        <input type="text" name="anggota[<?php echo e($i); ?>][no_telp]"
+                                        value="<?php echo e($a->no_telp); ?>"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                 </div>
 
                                 <!-- Spesialisasi -->
                                 <div class="mb-4">
                                     <label class="block text-gray-700 mb-1">Spesialisasi Magang</label>
-                                    <select name="anggota[{{ $i }}][spesialisasi_id]"
+                                    <select name="anggota[<?php echo e($i); ?>][spesialisasi_id]"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                         <option value="">Pilih Spesialisasi</option>
-                                        @foreach ($spesialisasiOptions as $id => $nama)
-                                            <option value="{{ $id }}" {{ $a->spesialisasi_id == $id ? 'selected' : '' }}>
-                                                {{ $nama }}
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $spesialisasiOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $nama): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($id); ?>" <?php echo e($a->spesialisasi_id == $id ? 'selected' : ''); ?>>
+                                                <?php echo e($nama); ?>
+
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     </select>
                                 </div>
 
                                 <!-- GitHub -->
                                 <div class="mb-4">
                                     <label class="block text-gray-700 mb-1">GitHub</label>
-                                    <input type="text" name="anggota[{{ $i }}][github]" 
-                                        value="{{ $a->github }}"
+                                    <input type="text" name="anggota[<?php echo e($i); ?>][github]" 
+                                        value="<?php echo e($a->github); ?>"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                 </div>
 
                                 <!-- LinkedIn -->
                                 <div class="mb-6">
                                     <label class="block text-gray-700 mb-1">LinkedIn</label>
-                                    <input type="text" name="anggota[{{ $i }}][linkedin]"
-                                        value="{{ $a->linkedin }}"
+                                    <input type="text" name="anggota[<?php echo e($i); ?>][linkedin]"
+                                        value="<?php echo e($a->linkedin); ?>"
                                         class="w-full border border-blue-300 rounded-md px-3 py-2">
                                 </div>
 
                                 <!-- Hidden ID -->
-                                <input type="hidden" name="anggota[{{ $i }}][id]" value="{{ $a->id }}">
+                                <input type="hidden" name="anggota[<?php echo e($i); ?>][id]" value="<?php echo e($a->id); ?>">
 
                                 <!-- Tombol Hapus -->
                                 <button type="button"
@@ -213,7 +224,7 @@
                                 </button>
 
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
 
                     <template id="anggotaTemplate">
@@ -246,9 +257,9 @@
                                 <select name="anggota[__INDEX__][spesialisasi_id]"
                                     class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
                                     <option value="">Pilih Spesialisasi</option>
-                                    @foreach ($spesialisasiOptions as $id => $nama)
-                                        <option value="{{ $id }}">{{ $nama }}</option>
-                                    @endforeach
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $spesialisasiOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $nama): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($id); ?>"><?php echo e($nama); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </select>
                             </div>
 
@@ -277,7 +288,7 @@
                         </div>
                     </template>
                 </div>
-                {{-- Tombol Simpan --}}
+                
                 <div class="flex justify-end pt-4 border-t mt-8">
                     <button type="submit"
                         class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
@@ -287,17 +298,17 @@
 
             </form>
 
-            @if(session('success'))
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success')): ?>
             <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                 <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6">
                     <h3 class="text-lg font-semibold">Data Berhasil Disimpan</h3>
-                    <p class="mt-2 text-gray-600">{{ session('success') }}</p>
+                    <p class="mt-2 text-gray-600"><?php echo e(session('success')); ?></p>
                     <div class="mt-6 flex justify-end">
                         <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md" onclick="document.getElementById('successModal').remove()">Tutup</button>
                     </div>
                 </div>
             </div>
-            @endif
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
             <!-- Penilaian Modal -->
             <div id="penilaianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="penilaianTitle">
@@ -313,28 +324,28 @@
                 </div>
             </div>
 
-            {{-- SECTION: Hapus Akun --}}
-            {{-- SECTION: Hapus Akun --}}
+            
+            
             <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Hapus Akun</h3>
                 <div class="border-t border-gray-200 pt-4">
-                    @includeIf('profile.partials.delete-user-form')
+                    <?php if ($__env->exists('profile.partials.delete-user-form')) echo $__env->make('profile.partials.delete-user-form', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 </div>
             </div>
 
         </div>
     </div>
 
-    {{-- SCRIPT TAMBAH / HAPUS ANGGOTA --}}
-    @push('scripts')
+    
+    <?php $__env->startPush('scripts'); ?>
     <script>
     document.addEventListener("DOMContentLoaded", () => {
         const btnTambah = document.getElementById("btnTambahAnggota");
         const container = document.getElementById("anggotaContainer");
         const templateEl = document.getElementById("anggotaTemplate");
         const template = templateEl ? templateEl.innerHTML : '';
-        const anggotaBase = "{{ $anggotaBase }}";
-        let index = {{ count($anggota) }};
+        const anggotaBase = "<?php echo e($anggotaBase); ?>";
+        let index = <?php echo e(count($anggota)); ?>;
 
         if (btnTambah && template) {
             btnTambah.addEventListener("click", () => {
@@ -464,5 +475,15 @@
         }
     });
     </script>
-    @endpush
-</x-app-layout>
+    <?php $__env->stopPush(); ?>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/profile/edit.blade.php ENDPATH**/ ?>
