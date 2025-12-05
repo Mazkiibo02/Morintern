@@ -30,6 +30,7 @@ class PesertaCalonForm
                 TextInput::make('kelompok_id')
                     ->numeric(),
                 Select::make('ketua_id')
+                    ->label(label: 'Ketua')
                     ->relationship('ketua', 'id'),
                 TextInput::make('perusahaan_id')
                     ->numeric(),

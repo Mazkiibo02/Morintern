@@ -106,4 +106,7 @@ class Peserta extends Authenticatable
     {
         return $this->hasOne(Penilaian::class);
     }
+
+
+
 }
