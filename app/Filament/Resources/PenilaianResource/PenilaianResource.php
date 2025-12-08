@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Penilaians;
+namespace App\Filament\Resources\PenilaianResource;
 
-use App\Filament\Resources\Penilaians\Pages\CreatePenilaian;
-use App\Filament\Resources\Penilaians\Pages\EditPenilaian;
-use App\Filament\Resources\Penilaians\Pages\ListPenilaians;
-use App\Filament\Resources\Penilaians\Pages\ViewPenilaian;
-use App\Filament\Resources\Penilaians\Schemas\PenilaianForm;
-use App\Filament\Resources\Penilaians\Schemas\PenilaianInfolist;
-use App\Filament\Resources\Penilaians\Tables\PenilaiansTable;
+use App\Filament\Resources\PenilaianResource\Pages\CreatePenilaian;
+use App\Filament\Resources\PenilaianResource\Pages\EditPenilaian;
+use App\Filament\Resources\PenilaianResource\Pages\ListPenilaians;
+use App\Filament\Resources\PenilaianResource\Pages\ViewPenilaian;
+use App\Filament\Resources\PenilaianResource\Schemas\PenilaianForm;
+use App\Filament\Resources\PenilaianResource\Schemas\PenilaianInfolist;
+use App\Filament\Resources\PenilaianResource\Tables\PenilaiansTable;
 use App\Models\Penilaian;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
-;use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 
 class PenilaianResource extends Resource
 {

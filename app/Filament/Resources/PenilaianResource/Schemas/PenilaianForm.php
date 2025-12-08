@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Penilaians\Schemas;
+namespace App\Filament\Resources\PenilaianResource\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;

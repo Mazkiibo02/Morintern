@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Penilaians\Pages;
+namespace App\Filament\Resources\PenilaianResource\Pages;
 
-use App\Filament\Resources\Penilaians\PenilaianResource;
+use App\Filament\Resources\PenilaianResource\PenilaianResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePenilaian extends CreateRecord
