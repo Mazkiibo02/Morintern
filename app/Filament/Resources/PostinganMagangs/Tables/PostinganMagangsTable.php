@@ -17,8 +17,9 @@ class PostinganMagangsTable
             ->columns([
                 TextColumn::make('judul_posisi')
                     ->searchable(),
-                TextColumn::make('spesialisasi_id')
-                    ->numeric()
+                TextColumn::make('spesialisasi.nama_spesialisasi')
+                    ->label('Spesialisasi')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('durasi')
                     ->searchable(),

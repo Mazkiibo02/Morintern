@@ -2,32 +2,25 @@
 
 namespace App\Filament\Resources\PesertaCalons;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Filament\Resources\PesertaCalons\Pages\ManagePesertaCalons;
+use App\Filament\Resources\PesertaCalons\Pages;
 use App\Models\PesertaCalon;
-use App\Models\Peserta;
-use BackedEnum;
-use Filament\Actions\BulkAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Resource;
+use Filament\Forms;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class PesertaCalonResource extends Resource
 {
     protected static ?string $model = PesertaCalon::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationLabel = 'Peserta Calon';
+    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Peserta';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nama_lengkap';
 
@@ -35,32 +28,46 @@ class PesertaCalonResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('nama_lengkap')->required(),
-                TextInput::make('email')->label('Email address')->email()->required(),
-                TextInput::make('password')->password(),
-                TextInput::make('no_telp')->tel(),
-                TextInput::make('universitas_id'),
-                TextInput::make('jurusan_id'),
-                TextInput::make('spesialisasi.nama_spesialisasi'),
-                TextInput::make('kelompok_id')->numeric(),
-                TextInput::make('ketua_id')->numeric(),
-                TextInput::make('perusahaan_id')->numeric(),
-                DatePicker::make('tanggal_mulai'),
-                DatePicker::make('tanggal_selesai'),
-                TextInput::make('github'),
-                TextInput::make('linkedin'),
-                TextInput::make('cv'),
-                TextInput::make('surat'),
-                Select::make('status')
+                Forms\Components\TextInput::make('nama_lengkap')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('no_telp')
+                    ->tel()
+                    ->maxLength(20),
+                Forms\Components\Select::make('spesialisasi_id')
+                    ->relationship('spesialisasi', 'nama_spesialisasi')
+                    ->searchable()
+                    ->preload(),
+                Forms\Components\TextInput::make('universitas_id')
+                    ->label('Universitas')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('jurusan_id')
+                    ->label('Jurusan')
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('tanggal_mulai'),
+                Forms\Components\DatePicker::make('tanggal_selesai'),
+                Forms\Components\TextInput::make('github')->url(),
+                Forms\Components\TextInput::make('linkedin')->url(),
+                Forms\Components\FileUpload::make('cv')
+                    ->directory('cv')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->maxSize(5120),
+                Forms\Components\FileUpload::make('surat')
+                    ->directory('surat')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
+                    ->maxSize(5120),
+                Forms\Components\Select::make('status')
                     ->options([
-                        'pendaftar' => 'Pendaftar',
-                        'mendaftar' => 'Mendaftar',
-                        'diterima' => 'Diterima',
-                        'ditolak' => 'Ditolak',
+                        'pending'   => 'Pending',
+                        'diterima'  => 'Diterima',
+                        'ditolak'   => 'Ditolak',
                     ])
-                    ->default('pendaftar')
+                    ->default('pending')
                     ->required(),
-                TextInput::make('google_id'),
             ]);
     }
 
@@ -69,92 +76,89 @@ class PesertaCalonResource extends Resource
         return $table
             ->recordTitleAttribute('nama_lengkap')
             ->columns([
-                TextColumn::make('nama_lengkap')->searchable(),
-                TextColumn::make('email')->label('Email')->searchable(),
-                TextColumn::make('no_telp')->searchable(),
-                TextColumn::make('universitas_id')->searchable()->label('Universitas'),
-                TextColumn::make('jurusan_id')->searchable()->label('Jurusan'),
-                TextColumn::make('spesialisasi.nama_spesialisasi'),
-                TextColumn::make('ketua_id')->numeric()->sortable()->label('Kelompok'),
-                TextColumn::make('perusahaan_id')->numeric()->sortable()->label('Perusahaan'),
-                TextColumn::make('tanggal_mulai')->date()->sortable(),
-                TextColumn::make('tanggal_selesai')->date()->sortable(),
-                TextColumn::make('github')->searchable(),
-                TextColumn::make('linkedin')->searchable(),
-                TextColumn::make('cv')->searchable(),
-                TextColumn::make('surat')->searchable(),
-                TextColumn::make('status')->badge(),
-                // TextColumn::make('google_id')->searchable(),
-                TextColumn::make('created_at')->dateTime()->sortable(),
-                TextColumn::make('updated_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('nama_lengkap')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('no_telp'),
+                Tables\Columns\TextColumn::make('spesialisasi.nama_spesialisasi')
+                    ->label('Spesialisasi')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending'   => 'warning',
+                        'diterima'  => 'success',
+                        'ditolak'   => 'danger',
+                        default     => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('tanggal_mulai')
+                    ->date()
+                    ->sortable(),
             ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pending'   => 'Pending',
+                        'diterima'  => 'Diterima',
+                        'ditolak'   => 'Ditolak',
+                    ]),
             ])
-            ->toolbarActions([
-    BulkActionGroup::make([
-        \Filament\Actions\DeleteBulkAction::make(),
+            ->actions([
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\Action::make('penilaian')
+                    ->label('Beri Penilaian')
+                    ->icon('heroicon-o-star')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\Textarea::make('kritik_saran')
+                            ->label('Kritik & Saran')
+                            ->rows(5),
+                        Forms\Components\FileUpload::make('file_penilaian')
+                            ->label('File Penilaian')
+                            ->directory('penilaian')
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->maxSize(10240),
+                    ])
+                    ->action(function (PesertaCalon $record, array $data) {
+                        $record->update([
+                            'kritik_saran' => $data['kritik_saran'],
+                            'file_penilaian' => $data['file_penilaian'] ?? $record->file_penilaian,
+                        ]);
 
-        BulkAction::make('approve')
-            ->label('Terima & Promosikan Peserta')
-            ->color('success')
-            ->icon('heroicon-o-check-circle')
-            ->requiresConfirmation()
-            ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
-                foreach ($records as $calon) {
-                    $data = [
-                        'nama_lengkap' => $calon->nama_lengkap,
-                        'email' => $calon->email,
-                        'password' => $calon->password ?? bcrypt(Str::random(16)),
-                        'no_telp' => $calon->no_telp,
-                        'spesialisasi_id' => $calon->spesialisasi_id,
-                        'kelompok_id' => $calon->kelompok_id,
-                        'universitas' => $calon->universitas_id,
-                        'jurusan' => $calon->jurusan_id,
-                        'tanggal_mulai' => $calon->tanggal_mulai,
-                        'tanggal_selesai' => $calon->tanggal_selesai,
-                        'github' => $calon->github,
-                        'linkedin' => $calon->linkedin,
-                        'cv' => $calon->cv,
-                        'surat' => $calon->surat,
-                    ];
-
-                    $existing = Peserta::where('email', $calon->email)->first();
-                    if ($existing) {
-                        $existing->update($data);
-                    } else {
-                        Peserta::create($data);
-                    }
-
-                    $calon->update(['status' => 'diterima']);
-                }
-            })
-            ->after(function () {
-                Notification::make()
-                    ->success()
-                    ->title('Peserta diterima & dipindahkan ke data peserta.')
-                    ->send();
-            }), // ← KOMA INI YANG HILANG!!!
-
-        BulkAction::make('reject')
-            ->label('Tolak Peserta Terpilih')
-            ->color('danger')
-            ->icon('heroicon-o-x-mark')
-            ->requiresConfirmation()
-            ->action(fn ($records) => $records->each->update(['status' => 'ditolak']))
-            ->after(fn () => Notification::make()
-                ->title('Peserta ditolak.')
-                ->success()
-                ->send()),
-    ]),
-            ]);
+                        Notification::make()
+                            ->success()
+                            ->title('Penilaian berhasil disimpan!')
+                            ->send();
+                    })
+                    ->visible(fn ($record) => $record->status === 'diterima'),
+            ])
+            ->bulkActions([
+                Actions\DeleteBulkAction::make(),
+                Actions\BulkAction::make('terima')
+                    ->label('Terima sebagai Peserta Aktif')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['status' => 'diterima']))
+                    ->after(fn () => Notification::make()->success()->title('Peserta diterima!')->send()),
+                Actions\BulkAction::make('tolak')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['status' => 'ditolak']))
+                    ->after(fn () => Notification::make()->success()->title('Peserta ditolak.')->send()),
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManagePesertaCalons::route('/'),
+            'index' => Pages\ListPesertaCalons::route('/'),
         ];
     }
 }

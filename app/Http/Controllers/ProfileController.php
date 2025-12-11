@@ -128,12 +128,22 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             unset($validated['nama_lengkap']);
         }
 
+        // Ensure ketua has kelompok_id
+        if ($user instanceof \App\Models\PesertaCalon && empty($user->kelompok_id)) {
+            $user->kelompok_id = $user->id;
+            $user->save();
+        }
         // Update ketua data
         $user->update($validated);
 
+        if (empty($user->kelompok_id)) {
+            $user->kelompok_id = $user->id;
+            $user->save();
+        }
+
         // Handle anggota data
         if ($request->has('anggota')) {
-            foreach ($request->anggota as $anggotaItem) {
+            foreach ($request->anggota as $idx => $anggotaItem) {
                 if (empty($anggotaItem['nama_lengkap'])) continue;
 
                 $anggotaValidated = validator($anggotaItem, [
@@ -145,6 +155,13 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
                     'linkedin' => 'nullable|string|max:255',
                     'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
                 ])->validate();
+
+                $cvPath = null;
+                $anggotaFiles = $request->file('anggota');
+                if (is_array($anggotaFiles) && isset($anggotaFiles[$idx]['cv']) && $anggotaFiles[$idx]['cv']) {
+                    $cvPath = $anggotaFiles[$idx]['cv']->store('landing/profile', 'public');
+                    $anggotaValidated['cv'] = $cvPath;
+                }
 
                 if (!empty($anggotaItem['id'])) {
                     $existingAnggota = PesertaCalon::where('ketua_id', $user->id)

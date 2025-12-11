@@ -11,6 +11,7 @@ class Penilaian extends Model
 
     protected $fillable = [
         'peserta_id',
+        'user_id',
         'nama',
         'nilai_rata_rata',
         'masukan',
@@ -27,5 +28,13 @@ class Penilaian extends Model
     public function peserta(): BelongsTo
     {
         return $this->belongsTo(Peserta::class);
+    }
+
+    /**
+     * Relasi ke User (mentor/admin)
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

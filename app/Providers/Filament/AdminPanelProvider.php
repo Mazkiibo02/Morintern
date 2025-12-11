@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\PenilaianResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -32,6 +33,9 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => '#6366f1',
             ])
+            ->resources([
+                PenilaianResource::class,
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -39,6 +43,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                \App\Filament\Widgets\DashboardStatsOverview::class,
+                \App\Filament\Widgets\PostinganMagangPerTanggalChart::class,
+                \App\Filament\Widgets\PesertaAktifPerTanggalChart::class,
+                \App\Filament\Widgets\CalonPesertaPerTanggalChart::class,
+                \App\Filament\Widgets\SpesialisasiTable::class,
             ])
             ->middleware([
                 EncryptCookies::class,

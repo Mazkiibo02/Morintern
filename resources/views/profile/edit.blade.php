@@ -101,9 +101,9 @@
 
                 {{-- CV --}}
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
-                    <label class="text-gray-700 text-right">CV</label>
+                    <label class="text-gray-700 text-right">CV (.pdf)</label>
                     <div class="col-span-2">
-                        <input type="file" name="cv" accept=".zip"
+                        <input type="file" name="cv" accept="application/pdf"
                             class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
                         @if($user->cv ?? false)
                             <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->cv) }}</p>
@@ -113,9 +113,9 @@
 
                 {{-- Surat Lamaran --}}
                 <div class="mb-4 grid grid-cols-3 gap-4 items-center">
-                    <label class="text-gray-700 text-right">Surat Lamaran</label>
+                    <label class="text-gray-700 text-right">Surat Lamaran (.pdf)</label>
                     <div class="col-span-2">
-                        <input type="file" name="surat" accept=".jpg,.jpeg,.png"
+                        <input type="file" name="surat" accept="application/pdf"
                             class="w-full text-sm border border-blue-300 rounded-md px-3 py-2">
                         @if($user->surat ?? false)
                             <p class="text-sm text-gray-500 mt-1">File saat ini: {{ basename($user->surat) }}</p>

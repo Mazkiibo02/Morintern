@@ -79,14 +79,14 @@
         {{-- File Upload --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-gray-700 font-medium mb-1">Upload CV (.zip)</label>
-                <input type="file" name="cv" accept=".zip"
+                <label class="block text-gray-700 font-medium mb-1">Upload CV (.pdf)</label>
+                <input type="file" name="cv" accept="application/pdf"
                     class="w-full text-sm text-gray-700 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
 
             <div>
-                <label class="block text-gray-700 font-medium mb-1">Upload Surat Lamaran (.jpg, .jpeg, .png)</label>
-                <input type="file" name="surat" accept=".jpg,.jpeg,.png"
+                <label class="block text-gray-700 font-medium mb-1">Upload Surat Lamaran (.pdf)</label>
+                <input type="file" name="surat" accept="application/pdf"
                     class="w-full text-sm text-gray-700 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
         </div>
@@ -118,6 +118,22 @@
                                             -
                                         @endif
                                     </strong>
+                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                    GitHub:
+                                    @if (!empty($a->github))
+                                        <a href="{{ $a->github }}" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-700">{{ $a->github }}</a>
+                                    @else
+                                        
+                                    @endif
+                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    LinkedIn:
+                                    @if (!empty($a->linkedin))
+                                        <a href="{{ $a->linkedin }}" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-700">{{ $a->linkedin }}</a>
+                                    @else
+                                        -
+                                    @endif
                                 </p>
                             </div>
                             <div class="space-x-2">
@@ -167,6 +183,12 @@
                     <label class="block text-gray-700 dark:text-gray-300 font-medium mb-1">Email</label>
                     <input type="email" name="anggota[__INDEX__][email]" 
                         class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-gray-700 dark:text-gray-300 font-medium mb-1">CV Anggota (.pdf)</label>
+                    <input type="file" name="anggota[__INDEX__][cv]" accept="application/pdf"
+                        class="w-full text-sm border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg">
+
                 </div>
                 <div>
                     <label class="block text-gray-700 dark:text-gray-300 font-medium mb-1">Spesialisasi</label>

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\PenilaianResource\Pages;
 
-use App\Filament\Resources\PenilaianResource\PenilaianResource;
+use App\Filament\Resources\PenilaianResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 

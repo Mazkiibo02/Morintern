@@ -51,6 +51,11 @@ class Peserta extends Authenticatable
         return $this->belongsTo(Spesialisasi::class, 'spesialisasi_id');
     }
 
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
     public function anggota(): HasMany
     {
         return $this->hasMany(PesertaCalon::class, 'ketua_id');

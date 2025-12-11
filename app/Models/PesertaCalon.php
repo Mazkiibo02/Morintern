@@ -86,36 +86,52 @@ class PesertaCalon extends Model implements AuthenticatableContract
                 return;
             }
             $status = strtolower((string) $calon->status);
-            if (! in_array($status, ['accepted', 'diterima'])) {
+
+            if (in_array($status, ['accepted', 'diterima'])) {
+                $promote = function (self $rc) {
+                    $data = [
+                        'nama_lengkap' => $rc->nama_lengkap,
+                        'email' => $rc->email,
+                        'password' => $rc->password ?: \Illuminate\Support\Str::random(16),
+                        'google_id' => $rc->google_id,
+                        'no_telp' => $rc->no_telp,
+                        'ketua_id' => $rc->ketua_id,
+                        'perusahaan_id' => $rc->perusahaan_id,
+                        'kelompok_id' => $rc->kelompok_id,
+                        'universitas' => (string) $rc->universitas_id,
+                        'jurusan' => (string) $rc->jurusan_id,
+                        'github' => $rc->github,
+                        'linkedin' => $rc->linkedin,
+                        'cv' => $rc->cv,
+                        'surat' => $rc->surat,
+                        'tanggal_daftar' => now(),
+                    ];
+                    $existing = Peserta::where('email', $rc->email)->first();
+                    $existing ? $existing->update($data) : Peserta::create($data);
+                    $rc->delete();
+                };
+
+                $promote($calon);
+
+                if ($calon->kelompok_id && ($calon->id === $calon->kelompok_id)) {
+                    $members = self::where('kelompok_id', $calon->kelompok_id)
+                        ->where('id', '!=', $calon->id)
+                        ->get();
+                    foreach ($members as $member) {
+                        $promote($member);
+                    }
+                }
                 return;
             }
 
-            $data = [
-                'nama_lengkap' => $calon->nama_lengkap,
-                'email' => $calon->email,
-                'password' => $calon->password ?: \Illuminate\Support\Str::random(16),
-                'google_id' => $calon->google_id,
-                'no_telp' => $calon->no_telp,
-                'ketua_id' => $calon->ketua_id,
-                'perusahaan_id' => $calon->perusahaan_id,
-                'kelompok_id' => $calon->kelompok_id,
-                'universitas' => (string) $calon->universitas_id,
-                'jurusan' => (string) $calon->jurusan_id,
-                'github' => $calon->github,
-                'linkedin' => $calon->linkedin,
-                'cv' => $calon->cv,
-                'surat' => $calon->surat,
-                'tanggal_daftar' => now(),
-            ];
-
-            $existing = Peserta::where('email', $calon->email)->first();
-            if ($existing) {
-                $existing->update($data);
-            } else {
-                Peserta::create($data);
+            if (in_array($status, ['rejected', 'ditolak'])) {
+                if ($calon->kelompok_id && ($calon->id === $calon->kelompok_id)) {
+                    \Illuminate\Database\Eloquent\Model::withoutEvents(function () use ($calon) {
+                        self::where('kelompok_id', $calon->kelompok_id)->update(['status' => 'ditolak']);
+                    });
+                }
+                return;
             }
-
-            $calon->delete();
         });
     }
 }

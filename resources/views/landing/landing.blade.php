@@ -61,9 +61,18 @@
 
                                 {{-- Card Body --}}
                                 <div class="p-6 md:p-8">
-                                    <p class="text-gray-700 mb-6 line-clamp-3 leading-relaxed">
-                                        {{ Str::limit($post->deskripsi, 120) }}
-                                    </p>
+                                    <div x-data="{ expanded: false }" class="mb-6">
+                                        <p x-show="!expanded" class="text-gray-700 leading-relaxed line-clamp-3">
+                                            {{ Str::limit($post->deskripsi, 160) }}
+                                        </p>
+                                        <p x-show="expanded" class="text-gray-700 leading-relaxed">
+                                            {{ $post->deskripsi }}
+                                        </p>
+                                        <button type="button" @click="expanded = !expanded" class="mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-semibold">
+                                            <span x-show="!expanded">Lihat selengkapnya</span>
+                                            <span x-show="expanded">Tutup</span>
+                                        </button>
+                                    </div>
 
                                     {{-- Stats --}}
                                     <div class="grid grid-cols-2 gap-3 md:gap-4 mb-6">

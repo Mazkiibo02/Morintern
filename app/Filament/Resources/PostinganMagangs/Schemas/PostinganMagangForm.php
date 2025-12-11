@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PostinganMagangs\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 
 class PostinganMagangForm
@@ -17,8 +18,12 @@ class PostinganMagangForm
                 Textarea::make('deskripsi')
                     ->required()
                     ->columnSpanFull(),
-                TextInput::make('spesialisasi_id')
-                    ->numeric(),
+                Select::make('spesialisasi_id')
+                    ->label('Spesialisasi')
+                    ->relationship('spesialisasi', 'nama_spesialisasi')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 TextInput::make('durasi')
                     ->required(),
                 TextInput::make('kuota')
