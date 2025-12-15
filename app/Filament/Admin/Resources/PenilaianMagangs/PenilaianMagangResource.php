@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\PenilaianMagangs;
 
-use App\Filament\Admin\Resources\PenilaianMagangs\Pages\CreatePenilaianMagang;
+use App\Filament\Admin\Resources\PenilaianMagangs\Pages\CreatePenilaianMagangs;
 use App\Filament\Admin\Resources\PenilaianMagangs\Pages\EditPenilaianMagang;
 use App\Filament\Admin\Resources\PenilaianMagangs\Pages\ListPenilaianMagangs;
 use App\Filament\Admin\Resources\PenilaianMagangs\Pages\ViewPenilaianMagang;
@@ -50,7 +50,7 @@ class PenilaianMagangResource extends Resource
     {
         return [
             'index' => ListPenilaianMagangs::route('/'),
-            'create' => CreatePenilaianMagang::route('/create'),
+            'create' => CreatePenilaianMagangs::route('/create'),
             'view' => ViewPenilaianMagang::route('/{record}'),
             'edit' => EditPenilaianMagang::route('/{record}/edit'),
         ];

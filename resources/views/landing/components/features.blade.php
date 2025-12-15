@@ -3,7 +3,7 @@
     <!-- Blue Top Bar -->
     <div class="w-screen h-16 bg-[#6D8ED0] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]"></div>
 
-
+    <div class="max-w-[1440px] mx-auto px-8 lg:px-12">
         <!-- Title Center -->
         <h2 class="text-center text-3xl lg:text-4xl font-bold text-[#3B82F6] mb-12 leading-snug">
             Program MorIntern dirancang untuk memberikan <br>

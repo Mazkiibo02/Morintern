@@ -1,5 +1,6 @@
-<footer id="kontak" class="bg-[#648DDB] text-white pt-16 pb-10">
-    <div class="max-w-[1440px] mx-auto px-8 lg:px-12">
+<footer id="kontak" class="text-white">
+    <div class="w-screen bg-[#648DDB] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+        <div class="max-w-[1440px] mx-auto px-8 lg:px-12 pt-12 pb-8">
 
         <!-- Grid utama -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -66,28 +67,30 @@
                     </a>
                 </div>
 
-                <!-- Google Maps -->
-                <div class="rounded-xl overflow-hidden shadow-lg">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.815780443631!2d110.4174625!3d-7.7680019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59db85d2936d%3A0xf54db039df3bb785!2sPT%20Medika%20Digital%20Nusantara!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
-                        width="100%"
-                        height="200"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
             </div>
 
         </div>
 
+        <!-- Full-width Google Maps -->
+        <div class="mt-10 rounded-xl overflow-hidden shadow-lg">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.815780443631!2d110.4174625!3d-7.7680019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59db85d2936d%3A0xf54db039df3bb785!2sPT%20Medika%20Digital%20Nusantara!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                width="100%"
+                height="260"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+
         <!-- Bottom Footer -->
-        <div class="mt-16 border-t border-white/20 pt-6 text-center">
+        <div class="mt-12 border-t border-white/20 pt-6 text-center">
             <p class="text-sm text-gray-100">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. Morbis.id.
+                &copy; {{ date('Y') }} Morintern. All rights reserved.
             </p>
         </div>
 
-    </div>
+        </div>
+</div>
 </footer>
