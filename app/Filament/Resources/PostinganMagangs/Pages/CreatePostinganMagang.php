@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PostinganMagangs\Pages;
+namespace App\Filament\Resources\PostinganMagangs\Pages;
 
-use App\Filament\Admin\Resources\PostinganMagangs\PostinganMagangResource;
+use App\Filament\Resources\PostinganMagangs\PostinganMagangResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePostinganMagang extends CreateRecord
