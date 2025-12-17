@@ -84,6 +84,45 @@
             </div>
         </div>
 
+{{-- Upload CV & Surat Rekomendasi --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div>
+                <x-input-label for="cv" :value="__('CV (PDF)')" />
+                <input type="file" 
+                       id="cv" 
+                       name="cv" 
+                       accept=".pdf"
+                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-800 dark:border-gray-600" />
+                <x-input-error class="mt-2" :messages="$errors->get('cv')" />
+                @if($user->cv)
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        File saat ini: 
+                        <a href="{{ Storage::url($user->cv) }}" target="_blank" class="text-blue-600 underline">
+                            {{ basename($user->cv) }}
+                        </a>
+                    </p>
+                @endif
+            </div>
+
+            <div>
+                <x-input-label for="surat" :value="__('Surat Rekomendasi (PDF)')" />
+                <input type="file" 
+                       id="surat" 
+                       name="surat" 
+                       accept=".pdf"
+                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-800 dark:border-gray-600" />
+                <x-input-error class="mt-2" :messages="$errors->get('surat')" />
+                @if($user->surat)
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        File saat ini: 
+                        <a href="{{ Storage::url($user->surat) }}" target="_blank" class="text-blue-600 underline">
+                            {{ basename($user->surat) }}
+                        </a>
+                    </p>
+                @endif
+            </div>
+        </div>
+
         {{-- Tombol Simpan --}}
         <div class="flex items-center gap-4 mt-6">
             <x-primary-button>{{ __('Simpan Perubahan') }}</x-primary-button>

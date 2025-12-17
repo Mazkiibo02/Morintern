@@ -12,11 +12,15 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'peserta' => [
+        'peserta_calon' => [
             'driver' => 'session',
             'provider' => 'peserta_calon',
         ],
-    ],
+        'peserta' => [
+            'driver' => 'session',
+            'provider' => 'peserta',
+        ],
+     ],
 
     'providers' => [
         'users' => [
@@ -26,6 +30,10 @@ return [
         'peserta_calon' => [
             'driver' => 'eloquent',
             'model' => App\Models\PesertaCalon::class,
+        ],
+        'peserta' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Peserta::class,
         ],
     ],
 

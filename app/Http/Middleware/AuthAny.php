@@ -14,11 +14,10 @@ class AuthAny
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() || Auth::guard('peserta')->check()) {
+        if (Auth::check() || Auth::guard('peserta_calon')->check() || Auth::guard('peserta')->check()) {
             return $next($request);
         }
 
-        // Not authenticated by either guard.
         return redirect()->guest(route('login'));
     }
 }

@@ -19,8 +19,8 @@ class NewPasswordController extends Controller
     public function create(Request $request): View
     {
         // Make sure user is logged out before showing reset form
-        if (auth('peserta')->check()) {
-            auth('peserta')->logout();
+        if (auth('peserta_calon')->check()) {
+            auth('peserta_calon')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
@@ -52,8 +52,8 @@ class NewPasswordController extends Controller
         Log::info('Password reset status: ' . $status);
 
         if ($status === Password::PASSWORD_RESET) {
-            if (auth('peserta')->check()) {
-                auth('peserta')->logout();
+            if (auth('peserta_calon')->check()) {
+                auth('peserta_calon')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
             }

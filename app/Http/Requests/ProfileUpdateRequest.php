@@ -35,8 +35,8 @@ class ProfileUpdateRequest extends FormRequest
             'jurusan_id' => ['nullable', 'string', 'max:255'],
             'tanggal_mulai' => ['nullable', 'date'],
             'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
-            'cv' => ['nullable', 'file', 'mimes:zip', 'max:10240'],
-            'surat' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'cv' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'surat' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ];
 
         if ($this->has('anggota')) {
@@ -50,6 +50,7 @@ class ProfileUpdateRequest extends FormRequest
                 'anggota.*.github' => ['nullable', 'string', 'max:255'],
                 'anggota.*.linkedin' => ['nullable', 'string', 'max:255'],
                 'anggota.*.spesialisasi_id' => ['nullable', 'integer', Rule::exists('spesialisasi', 'id')],
+                'anggota.*.cv' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             ]);
         }
 

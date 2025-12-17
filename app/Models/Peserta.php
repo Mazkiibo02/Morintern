@@ -24,7 +24,6 @@ class Peserta extends Authenticatable
         'google_id',
         'no_telp',
         'ketua_id',
-        'konten_id',
         'perusahaan_id',
         'tanggal_daftar',
         'status_id',
@@ -50,6 +49,11 @@ class Peserta extends Authenticatable
     public function spesialisasi(): BelongsTo
     {
         return $this->belongsTo(Spesialisasi::class, 'spesialisasi_id');
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     public function anggota(): HasMany
@@ -102,4 +106,12 @@ class Peserta extends Authenticatable
         'tanggal_selesai' => 'date',
         'tanggal_daftar' => 'date',
     ];
+
+    public function penilaian()
+    {
+        return $this->hasOne(Penilaian::class);
+    }
+
+
+
 }

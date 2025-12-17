@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PesertaCalon;
 use App\Models\Spesialisasi;
-use App\Models\PenilaianMagang;
+use App\Models\Penilaian;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +15,8 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    //  Display the user's profile form.
+    
     public function edit(Request $request): View
     {
         $user = $this->getAuthenticatedUser();
@@ -25,7 +24,7 @@ class ProfileController extends Controller
         
         // Get anggota if user is peserta (ketua)
         $anggota = [];
-        if (Auth::guard('peserta')->check()) {
+        if (Auth::guard('peserta_calon')->check()) {
             $anggota = PesertaCalon::where('ketua_id', $user->id)->get();
         }
 
@@ -40,9 +39,32 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+    public function register(Request $request)
+{
+    $validated = $request->validate([
+        'nama_lengkap' => 'required|string|max:255',
+        'email'        => 'required|email|unique:users,email',
+        'password'     => 'required|min:6',
+    ]);
+
+    // Hash password
+    $validated['password'] = bcrypt($validated['password']);
+
+    // Set role default = peserta (sesuai tabel `role` lokalmu)
+    $validated['role_id'] = 4; // pastikan 4 = peserta
+
+    // Buat user baru
+    $user = User::create([
+        'name'     => $validated['nama_lengkap'],
+        'email'    => $validated['email'],
+        'password' => $validated['password'],
+        'role_id'  => $validated['role_id'],
+    ]);
+
+    return redirect()->route('peserta.login')
+        ->with('success', 'Akun berhasil dibuat. Silakan login.');
+}
+
     public function update(Request $request)
     {
         $user = $this->getAuthenticatedUser();
@@ -54,21 +76,21 @@ class ProfileController extends Controller
             ], 401);
         }
 
-    $validated = $request->validate([
-    'name' => 'nullable|string|max:100',
-    'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
-    'nama_lengkap' => 'nullable|string|max:100',
-    'no_telp' => 'nullable|string|max:20',
-    'github' => 'nullable|string|max:255',
-    'linkedin' => 'nullable|string|max:255',
-    'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
-    'universitas_id' => 'nullable|string|max:255',
-    'jurusan_id' => 'nullable|string|max:255',
-    'tanggal_mulai' => 'nullable|date',
-    'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-    'cv' => 'nullable|file|mimes:zip|max:10240',
-    'surat' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-]);
+        $validated = $request->validate([
+        'name' => 'nullable|string|max:100',
+        'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
+        'nama_lengkap' => 'nullable|string|max:100',
+        'no_telp' => 'nullable|string|max:20',
+        'github' => 'nullable|string|max:255',
+        'linkedin' => 'nullable|string|max:255',
+        'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
+        'universitas_id' => 'nullable|string|max:255',
+        'jurusan_id' => 'nullable|string|max:255',
+        'tanggal_mulai' => 'nullable|date',
+        'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+        'cv' => 'nullable|file|mimes:pdf|max:10240',     // PDF, max 10MB
+        'surat' => 'nullable|file|mimes:pdf|max:10240',  // PDF, max 10MB
+    ]);
 
 // Map 'name' to 'nama_lengkap' for consistency
 if (isset($validated['name']) && !isset($validated['nama_lengkap'])) {
@@ -106,12 +128,22 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             unset($validated['nama_lengkap']);
         }
 
+        // Ensure ketua has kelompok_id
+        if ($user instanceof \App\Models\PesertaCalon && empty($user->kelompok_id)) {
+            $user->kelompok_id = $user->id;
+            $user->save();
+        }
         // Update ketua data
         $user->update($validated);
 
+        if (empty($user->kelompok_id)) {
+            $user->kelompok_id = $user->id;
+            $user->save();
+        }
+
         // Handle anggota data
         if ($request->has('anggota')) {
-            foreach ($request->anggota as $anggotaItem) {
+            foreach ($request->anggota as $idx => $anggotaItem) {
                 if (empty($anggotaItem['nama_lengkap'])) continue;
 
                 $anggotaValidated = validator($anggotaItem, [
@@ -123,6 +155,13 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
                     'linkedin' => 'nullable|string|max:255',
                     'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
                 ])->validate();
+
+                $cvPath = null;
+                $anggotaFiles = $request->file('anggota');
+                if (is_array($anggotaFiles) && isset($anggotaFiles[$idx]['cv']) && $anggotaFiles[$idx]['cv']) {
+                    $cvPath = $anggotaFiles[$idx]['cv']->store('landing/profile', 'public');
+                    $anggotaValidated['cv'] = $cvPath;
+                }
 
                 if (!empty($anggotaItem['id'])) {
                     $existingAnggota = PesertaCalon::where('ketua_id', $user->id)
@@ -170,7 +209,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function updateProfileData(Request $request): JsonResponse
     {
-        $user = Auth::guard('peserta')->user();
+        $user = Auth::guard('peserta_calon')->user();
 
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
@@ -194,7 +233,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function storeAnggota(Request $request): JsonResponse
     {
-        $ketua = Auth::guard('peserta')->user();
+        $ketua = Auth::guard('peserta_calon')->user();
 
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
@@ -231,7 +270,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
     public function destroyAnggota(int $id): JsonResponse
     {
         try {
-            $ketua = Auth::guard('peserta')->user() ?? Auth::user();
+            $ketua = Auth::guard('peserta_calon')->user() ?? Auth::user();
 
             if (!$ketua) {
                 return response()->json([
@@ -271,7 +310,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function getAnggota(Request $request): JsonResponse
     {
-        $ketua = Auth::guard('peserta')->user();
+        $ketua = Auth::guard('peserta_calon')->user();
 
         $anggota = PesertaCalon::where('ketua_id', $ketua->id)
             ->with('spesialisasi')
@@ -322,10 +361,10 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             ]);
         }
 
-        $records = PenilaianMagang::where('nama', $name)->get();
+        $records = Penilaian::where('nama', $name)->get();
 
         if ($records->isEmpty()) {
-            $records = PenilaianMagang::where('nama', 'like', "%{$name}%")->get();
+            $records = Penilaian::where('nama', 'like', "%{$name}%")->get();
         }
 
         // Map records to include accessible file URL when present
@@ -363,7 +402,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     private function getAuthenticatedUser()
     {
-        return Auth::check() ? Auth::user() : Auth::guard('peserta')->user();
+        return Auth::check() ? Auth::user() : (Auth::guard('peserta_calon')->user() ?? Auth::guard('peserta')->user());
     }
 
     /**
@@ -371,7 +410,12 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     private function getActiveGuard(): ?string
     {
-        return Auth::check() ? 'web' : (Auth::guard('peserta')->check() ? 'peserta' : null);
+        return Auth::check() ? 'web' : (Auth::guard('peserta_calon')->check() ? 'peserta_calon' : (Auth::guard('peserta')->check() ? 'peserta' : null));
     }
 
+    public function show()
+    {
+        $peserta = Auth::guard('peserta_calon')->user();
+        return view('profile.edit'); //  partials/profile-peserta.blade.php
+    }
 }
