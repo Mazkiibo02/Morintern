@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Peserta;
 
+use Log;
 use App\Http\Controllers\Controller;
-use App\Models\Peserta;
+use App\Models\PesertaCalon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -18,8 +19,8 @@ class NewPasswordController extends Controller
     public function create(Request $request): View
     {
         // Make sure user is logged out before showing reset form
-        if (auth('peserta')->check()) {
-            auth('peserta')->logout();
+        if (auth('peserta_calon')->check()) {
+            auth('peserta_calon')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
@@ -28,7 +29,7 @@ class NewPasswordController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        \Log::info('Password reset attempt for: ' . $request->email);
+        Log::info('Password reset attempt for: ' . $request->email);
         
         $request->validate([
             'token' => ['required'],
@@ -36,9 +37,9 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $status = Password::broker('pesertas')->reset(
+        $status = Password::broker('peserta_calon')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (Peserta $peserta) use ($request) {
+            function (PesertaCalon $peserta) use ($request) {
                 $peserta->forceFill([
                     'password' => Hash::make($request->password),
                     'remember_token' => Str::random(60),
@@ -48,15 +49,15 @@ class NewPasswordController extends Controller
             }
         );
 
-        \Log::info('Password reset status: ' . $status);
+        Log::info('Password reset status: ' . $status);
 
         if ($status === Password::PASSWORD_RESET) {
-            if (auth('peserta')->check()) {
-                auth('peserta')->logout();
+            if (auth('peserta_calon')->check()) {
+                auth('peserta_calon')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
             }
-            return redirect('/login')->with('status', __($status));
+            return redirect('peserta/login')->with('status', __($status));
         }
         
         return back()->withErrors(['email' => [__($status)]]);

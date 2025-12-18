@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Peserta;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthenticatedPesertaController extends Controller
 {
@@ -20,21 +23,34 @@ class AuthenticatedPesertaController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::guard('peserta')->attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+        // Rate limiting: 5 attempts per minute per email+IP
+        $throttleKey = Str::transliterate(Str::lower($request->input('email'))) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.throttle', ['seconds' => RateLimiter::availableIn($throttleKey)]),
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
+        if (Auth::guard('peserta_calon')->attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::clear($throttleKey);
+            $request->session()->regenerate();
+            $request->session()->flash('just_logged_in', true);
+            return redirect()->route('landing');
+        }
+
+        RateLimiter::hit($throttleKey);
+
+        throw ValidationException::withMessages([
+            'email' => __('auth.failed'),
         ]);
     }
 
     public function destroy(Request $request)
     {
-        Auth::guard('peserta')->logout();
+        Auth::guard('peserta_calon')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect()->route('landing');
     }
 }
