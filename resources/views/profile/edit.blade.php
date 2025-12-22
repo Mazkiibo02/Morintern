@@ -26,7 +26,7 @@
                 $formAction = $isPeserta ? route('peserta.profil.update') : route('profile.update');
                 $anggotaBase = $isPeserta ? url('/peserta/profil') : url('/profile');
             @endphp
-            <form id="formProfilKetua" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" 
+            <form id="formProfilKetua" method="POST" action="{{ $formAction }}" enctype="multipart/form-data" data-anggota-base="{{ $anggotaBase }}"
                 class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200">
                 @csrf
 
@@ -145,7 +145,7 @@
                         </button>
                     </div>
 
-                    <div id="anggotaContainer" class="space-y-4">
+                    <div id="anggotaContainer" class="space-y-4" data-anggota-count="{{ count($anggota ?? []) }}">
                         @foreach ($anggota as $i => $a)
                             <div class="border border-blue-300/50 rounded-lg p-6 anggota-item bg-white shadow-sm relative">
 
@@ -333,8 +333,9 @@
         const container = document.getElementById("anggotaContainer");
         const templateEl = document.getElementById("anggotaTemplate");
         const template = templateEl ? templateEl.innerHTML : '';
-        const anggotaBase = "{{ $anggotaBase }}";
-        let index = {{ count($anggota) }};
+        const formEl = document.getElementById("formProfilKetua");
+        const anggotaBase = formEl?.dataset?.anggotaBase || "";
+        let index = parseInt(container?.dataset?.anggotaCount ?? '0', 10);
 
         if (btnTambah && template) {
             btnTambah.addEventListener("click", () => {
