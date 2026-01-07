@@ -1,12 +1,7 @@
 <section class="bg-white pt-0 pb-20">
 
-    <!-- Blue Top Bar With Text -->
-    <!-- HEADER BAR FULL WIDTH -->
-    <div class="w-screen bg-[#6D8ED0] py-4 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-        <h3 class="text-center text-white font-semibold text-2xl lg:text-3xl tracking-wide">
-            PROGRAM MORINTERN MEMBERI PENGALAMAN KERJA NYATA DI INDUSTRI
-        </h3>
-    </div>
+    {{-- Section header for features --}}
+    @include('landing.components.section-header', ['title' => 'Program Morintern', 'subtitle' => 'Memberi pengalaman kerja nyata di industri'])
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mt-30 px-6 lg:px-12">
 
         <!-- Left Image Collage -->

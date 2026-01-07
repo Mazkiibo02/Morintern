@@ -1,11 +1,7 @@
 <section class="pt-0 pb-20 bg-white">
 
-    <!-- HEADER BAR FULL WIDTH -->
-    <div class="w-screen bg-[#6D8ED0] py-4 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-        <h3 class="text-center text-white font-semibold text-2xl lg:text-3xl tracking-wide">
-            PERGURUAN TINGGI MITRA
-        </h3>
-    </div>
+    {{-- Section title (use shared component for consistency) --}}
+    @include('landing.components.section-header', ['title' => 'Perguruan tinggi mitra'])
 
     <!-- Container isi -->
     <div class="max-w-[1440px] mx-auto px-6 lg:px-12 mt-12">

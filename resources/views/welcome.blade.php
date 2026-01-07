@@ -91,12 +91,7 @@
 
                     <!-- Right: Text Content -->
                     <div>
-                        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                            Tentang Program Magang
-                        </h2>
-                        <p class="text-lg text-gray-600">
-                            Program magang kami dirancang untuk membantu mahasiswa mendapatkan pengalaman kerja nyata di industri. Dengan berbagai pilihan bidang dan perusahaan terkemuka, kami siap membantu Anda mengembangkan keterampilan profesional.
-                        </p>
+                        @include('landing.components.section-header', ['title' => 'Tentang program magang', 'subtitle' => 'Program magang kami dirancang untuk membantu mahasiswa mendapatkan pengalaman kerja nyata di industri. Dengan berbagai pilihan bidang dan perusahaan terkemuka, kami siap membantu Anda mengembangkan keterampilan profesional.'])
                     </div>
                 </div>
             </div>
@@ -105,14 +100,7 @@
         <!-- Open Internship Positions Section -->
         <section class="py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                        Posisi Magang Tersedia
-                    </h2>
-                    <p class="text-lg text-gray-600">
-                        Pilih bidang yang sesuai dengan minat dan keahlianmu
-                    </p>
-                </div>
+                @include('landing.components.section-header', ['title' => 'Posisi magang tersedia', 'subtitle' => 'Pilih bidang yang sesuai dengan minat dan keahlianmu'])
 
                 <!-- Cards Grid -->
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

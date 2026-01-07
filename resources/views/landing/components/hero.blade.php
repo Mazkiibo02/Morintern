@@ -34,7 +34,7 @@
                         </div>
                         <div>
                             <p class="text-xl font-bold text-blue-600">10+</p>
-                            <p class="text-gray-800 text-sm">Lowongan Tersedia</p>
+                            <p class="text-gray-800 text-sm">Lowongan tersedia</p>
                         </div>
                     </div>
 

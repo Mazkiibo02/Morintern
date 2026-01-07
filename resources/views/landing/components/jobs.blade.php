@@ -1,10 +1,7 @@
 <!-- Jobs section -->
     <section id="lowongan" class="bg-white py-16">
-    <div class="w-screen bg-[#6D8ED0] py-6 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mb-12">
-        <h2 class="text-center text-white text-2xl lg:text-3xl font-bold tracking-wide">
-            LOWONGAN TERSEDIA
-        </h2>
-    </div>
+    {{-- Section header for jobs --}}
+    @include('landing.components.section-header', ['title' => 'Lowongan magang tersedia'])
 
         <!-- Grid Card -->
         <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
