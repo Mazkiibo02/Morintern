@@ -28,7 +28,7 @@ class RegisteredPesertaController extends Controller
     {
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:peserta_calon,email'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:calon_pesertas,email'],
             'no_telp' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
@@ -42,7 +42,7 @@ class RegisteredPesertaController extends Controller
             'linkedin'     => '-', 
             'tanggal_mulai'    => now(),
             'tanggal_selesai'  => now(),
-            'kelompok_id'      => 0,
+            'kelompok_id'      => null,
             'cv'               => '-',
             'surat'            => '-',
         ]);

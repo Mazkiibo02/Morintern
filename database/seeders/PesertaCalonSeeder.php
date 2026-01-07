@@ -10,7 +10,7 @@ class PesertaCalonSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('peserta_calon')->insert([
+        DB::table('calon_pesertas')->insert([
             [
                 'nama_lengkap' => 'Tes Calon Peserta',
                 'email' => 'tescalon@example.com',

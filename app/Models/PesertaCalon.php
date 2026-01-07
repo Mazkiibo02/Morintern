@@ -13,7 +13,7 @@ class PesertaCalon extends Model implements AuthenticatableContract
 {
     use Authenticatable,  HasFactory, Notifiable;  // Tambah Notifiable untuk email notif
 
-    protected $table = 'peserta_calon';
+    protected $table = 'calon_pesertas';
 
     protected $fillable = [
         'nama_lengkap', 'email', 'password', 'no_telp', 'universitas_id', 'jurusan_id',

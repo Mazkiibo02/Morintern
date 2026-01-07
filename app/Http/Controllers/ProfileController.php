@@ -238,7 +238,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
             'no_telp' => 'required|string|max:20',
-            'email' => 'required|email|max:100|unique:peserta_calon,email',
+            'email' => 'required|email|max:100|unique:calon_pesertas,email',
             'github' => 'nullable|string|max:255',
             'linkedin' => 'nullable|string|max:255',
             'spesialisasi_id' => 'nullable|exists:spesialisasi,id',
