@@ -9,7 +9,7 @@ class Spesialisasi extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'spesialisasi';  // INI YANG WAJIB ADA!
+    protected $table = 'spesialisasis';  // INI YANG WAJIB ADA!
 
     protected $fillable = [
         'nama_spesialisasi',
