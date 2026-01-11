@@ -7,10 +7,10 @@
 
             <!-- Brand -->
             <div>
-                <h2 class="text-2xl font-bold tracking-tight">
+                <h2 class="text-4xl font-bold tracking-tight">
                     Mor<span class="text-gray-200">Intern</span>
                 </h2>
-                <p class="mt-4 text-gray-100 leading-relaxed max-w-sm">
+                <p class="mt-4 text-lg text-gray-100 leading-relaxed max-w-sm">
                     Program magang yang membantu mahasiswa dan fresh graduate 
                     membangun pengalaman nyata dan mengembangkan potensi terbaik mereka.
                 </p>
@@ -18,7 +18,7 @@
 
             <!-- Navigation -->
             <div>
-                <h3 class="text-lg font-semibold mb-4">Navigasi</h3>
+                <h3 class="text-xl font-semibold mb-5">Navigasi</h3>
                 <ul class="space-y-3 text-gray-100">
                     <li><a href="/" class="hover:text-gray-200 transition">Home</a></li>
                     <li><a href="#program" class="hover:text-gray-200 transition">Tentang</a></li>
@@ -29,7 +29,7 @@
 
             <!-- Contact + Maps -->
             <div>
-                <h3 class="text-lg font-semibold mb-4">Hubungi Kami</h3>
+                <h3 class="text-xl font-semibold mb-5">Hubungi Kami</h3>
                 <p class="text-gray-100 mb-6">
                     Terhubung dengan kami melalui email, telepon, atau media sosial.
                 </p>

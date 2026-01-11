@@ -1,7 +1,4 @@
 <section class="bg-white pt-0 pb-20">
-    
-    <!-- Blue Top Bar -->
-    <div class="w-screen h-16 bg-[#6D8ED0] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]"></div>
 
     <div class="max-w-[1440px] mx-auto px-8 lg:px-12">
         <!-- Title Center -->
@@ -39,48 +36,68 @@
                              class="absolute inset-0 w-full h-full object-cover">
                     </div>
 
+                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
+                    <img src="<?php echo e(asset('assets/landing/feature-1.jpg')); ?>"
+                        class="absolute inset-0 w-full h-full object-cover">
                 </div>
+
+                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
+                    <img src="<?php echo e(asset('assets/landing/feature-2.jpg')); ?>"
+                        class="absolute inset-0 w-full h-full object-cover">
+                </div>
+
+                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
+                    <img src="<?php echo e(asset('assets/landing/feature-3.jpg')); ?>"
+                        class="absolute inset-0 w-full h-full object-cover">
+                </div>
+
+                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
+                    <img src="<?php echo e(asset('assets/landing/feature-4.jpg')); ?>"
+                        class="absolute inset-0 w-full h-full object-cover">
+                </div>
+
             </div>
-
-            <!-- Right Text Content -->
-            <div>
-                <p class="text-gray-600 max-w-lg leading-relaxed">
-                    Selama masa magang, peserta akan mendapatkan kombinasi pengalaman praktis
-                    dan bimbingan yang meningkatkan kesiapan karier.
-                </p>
-
-                <ul class="mt-8 space-y-4">
-                    <li class="flex items-start gap-4">
-                        <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
-                        <span class="text-gray-700">
-                            Berkolaborasi dengan tim profesional lintas divisi.
-                        </span>
-                    </li>
-
-                    <li class="flex items-start gap-4">
-                        <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
-                        <span class="text-gray-700">
-                            Mengembangkan proyek nyata yang memberikan dampak langsung.
-                        </span>
-                    </li>
-
-                    <li class="flex items-start gap-4">
-                        <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
-                        <span class="text-gray-700">
-                            Mendapatkan bimbingan dari mentor berpengalaman.
-                        </span>
-                    </li>
-
-                    <li class="flex items-start gap-4">
-                        <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
-                        <span class="text-gray-700">
-                            Membangun portofolio profesional dan skill yang relevan industri.
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
         </div>
+
+        <!-- Right Text Content -->
+        <div class="lg:pl-12">
+            <p class="text-gray-600 max-w-lg leading-relaxed">
+                Selama masa magang, peserta akan mendapatkan kombinasi pengalaman praktis
+                dan bimbingan yang meningkatkan kesiapan karier.
+            </p>
+
+            <ul class="mt-8 space-y-4">
+                <li class="flex items-start gap-4">
+                    <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
+                    <span class="text-gray-700">
+                        Berkolaborasi dengan tim profesional lintas divisi.
+                    </span>
+                </li>
+
+                <li class="flex items-start gap-4">
+                    <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
+                    <span class="text-gray-700">
+                        Mengembangkan proyek nyata yang memberikan dampak langsung.
+                    </span>
+                </li>
+
+                <li class="flex items-start gap-4">
+                    <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
+                    <span class="text-gray-700">
+                        Mendapatkan bimbingan dari mentor berpengalaman.
+                    </span>
+                </li>
+
+                <li class="flex items-start gap-4">
+                    <div class="mt-1 w-3 h-3 rounded-full bg-[#648DDB]"></div>
+                    <span class="text-gray-700">
+                        Membangun portofolio profesional dan skill yang relevan industri.
+                    </span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
     </div>
 </section>
 <?php /**PATH D:\Document\KULIAH\projectmagang\Morintern\resources\views/landing/components/features.blade.php ENDPATH**/ ?>
