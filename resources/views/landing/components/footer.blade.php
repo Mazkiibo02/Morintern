@@ -1,6 +1,6 @@
 <footer id="kontak" class="text-white">
     <div class="w-screen bg-[#648DDB] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-        <div class="max-w-[1440px] mx-auto px-8 lg:px-12 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
 
         <!-- Grid utama -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">

@@ -25,7 +25,7 @@
     </style>
 </head>
 
-<body class="antialiased bg-white text-gray-900">
+<body class="antialiased bg-white text-gray-900 overflow-x-hidden">
     <!-- Add left/right padding 150px for landing page content -->
     <div x-data="{ mobileMenuOpen: false }" class="min-h-screen" style="padding-left:0px;padding-right:0px;">
         @yield('content')

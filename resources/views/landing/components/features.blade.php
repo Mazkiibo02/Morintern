@@ -1,16 +1,7 @@
-<section class="bg-white pt-0 pb-20">
+<x-section-heading title="Program MorIntern dirancang untuk memberikan pengalaman kerja nyata di dunia industri." />
 
-    <div class="max-w-[1440px] mx-auto px-8 lg:px-12">
-        <!-- Title Center -->
-        <h2 class="text-center text-3xl lg:text-4xl font-bold text-[#3B82F6] mb-12 leading-snug">
-            Program MorIntern dirancang untuk memberikan <br>
-            <span class="bg-gradient-to-r from-[#3B82F6] to-[#3B82F6] text-transparent bg-clip-text">
-                pengalaman kerja nyata
-            </span>
-            di dunia industri.
-        </h2>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             <!-- Left Image Collage -->
             <div class="flex justify-center lg:justify-start">
@@ -35,26 +26,6 @@
                         <img src="{{ asset('assets/landing/feature-4.jpg') }}"
                              class="absolute inset-0 w-full h-full object-cover">
                     </div>
-
-                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-1.jpg') }}"
-                        class="absolute inset-0 w-full h-full object-cover">
-                </div>
-
-                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-2.jpg') }}"
-                        class="absolute inset-0 w-full h-full object-cover">
-                </div>
-
-                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-3.jpg') }}"
-                        class="absolute inset-0 w-full h-full object-cover">
-                </div>
-
-                <div class="relative w-full pb-[100%] shadow-lg rounded-3xl overflow-hidden">
-                    <img src="{{ asset('assets/landing/feature-4.jpg') }}"
-                        class="absolute inset-0 w-full h-full object-cover">
-                </div>
 
             </div>
         </div>
@@ -98,5 +69,4 @@
         </div>
 
     </div>
-    </div>
-</section>
+</div>

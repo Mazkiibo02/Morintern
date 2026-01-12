@@ -1,17 +1,8 @@
-<section class="pt-0 pb-20 bg-white">
+<x-section-heading title="PERGURUAN TINGGI MITRA" subtitle="MORBIS melalui MORINTERN berkolaborasi dengan berbagai Perguruan Tinggi di Indonesia untuk memberikan pengalaman magang berbasis proyek nyata. Melalui kerja sama ini, mahasiswa tidak hanya belajar teori, tetapi juga mengasah keterampilan teknis dan soft skill langsung dari industri." />
 
-    <!-- HEADER BAR FULL WIDTH -->
-    <div class="w-screen bg-[#6D8ED0] py-4 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-        <h3 class="text-center text-white font-semibold text-2xl lg:text-3xl tracking-wide">
-            PERGURUAN TINGGI MITRA
-        </h3>
-    </div>
-
-    <!-- Container isi -->
-    <div class="max-w-[1440px] mx-auto px-6 lg:px-12 mt-12">
-
-        <!-- Intro + Foto -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Intro + Foto -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
             <!-- Text -->
             <div class="text-black text-lg leading-relaxed">
@@ -93,4 +84,4 @@
         </div>
 
     </div>
-</section>
+</div>

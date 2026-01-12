@@ -1,6 +1,6 @@
 {{-- Component: header --}}
 <header class="w-full border-b border-gray-100 bg-white backdrop-blur-sm" x-data="{ mobileMenuOpen: false }">
-    <div class="max-w-[1440px] mx-auto px-8 lg:px-12 py-5 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
 
         <!-- Logo (Left) -->
         <a href="/" class="flex items-center gap-2 select-none">

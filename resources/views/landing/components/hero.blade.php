@@ -1,26 +1,18 @@
 {{-- Component: hero --}}
-<section id="hero" class="pt-10 pb-20 bg-white relative overflow-hidden">
-    <div class="max-w-[1440px] mx-auto px-8 lg:px-12">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+<x-section-heading title="Kesempatan Magang untuk Generasi Muda Inovatif" subtitle="Mulai langkah pertama menuju karier impianmu melalui program magang yang memberikan pengalaman nyata, pembelajaran langsung di industri, dan kesempatan berjejaring bersama profesional berpengalaman." />
 
-            <!-- Left Content -->
-            <div class="max-w-xl">
-                <h1 class="text-4xl lg:text-6xl font-bold text-[#0F172A] leading-[1.2]">
-                    Kesempatan Magang untuk Generasi Muda Inovatif
-                </h1>
-                <p class="mt-6 text-lg text-gray-600 leading-relaxed">
-                    Mulai langkah pertama menuju karier impianmu melalui program magang 
-                    yang memberikan pengalaman nyata, pembelajaran langsung di industri, 
-                    dan kesempatan berjejaring bersama profesional berpengalaman.
-                </p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-                <div class="mt-10">
-                    <a href="#lowongan" 
-                    class="inline-block bg-[#648DDB] hover:bg-[#527BC8] text-white px-7 py-3 rounded-lg font-semibold shadow-md transition">
-                        Cari Lowongan
-                    </a>
-                </div>
+        <!-- Left Content -->
+        <div class="max-w-xl">
+            <div class="mt-10">
+                <a href="#lowongan" 
+                class="inline-block bg-[#648DDB] hover:bg-[#527BC8] text-white px-7 py-3 rounded-lg font-semibold shadow-md transition">
+                    Cari Lowongan
+                </a>
             </div>
+        </div>
 
             <!-- Right Illustration with Floating Cards -->
             <div class="relative flex justify-center lg:justify-end">
@@ -65,4 +57,4 @@
 
     <!-- Soft gradient background decoration -->
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-200/30 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3"></div>
-</section>
+</div>
