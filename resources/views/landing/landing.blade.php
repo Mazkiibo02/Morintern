@@ -29,108 +29,18 @@
         {{-- Job Section --}}
         <x-section-heading title="Lowongan Magang Tersedia" subtitle="Pilih posisi impianmu dan bergabung bersama kami!" />
 
-        @if($postingans->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        @foreach($postingans as $post)
-                            <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
-                                {{-- Card Header --}}
-                                <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 md:p-8 text-white">
-                                    <h3 class="text-xl md:text-2xl font-bold mb-3 line-clamp-2">
-                                        {{ $post->judul_posisi }}
-                                    </h3>
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span class="text-indigo-100 font-medium truncate">
-                                            {{ $post->spesialisasi?->nama_spesialisasi ?? 'Umum' }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {{-- Card Body --}}
-                                <div class="p-6 md:p-8">
-                                    <div x-data="{ expanded: false }" class="mb-6">
-                                        <p x-show="!expanded" class="text-gray-700 leading-relaxed line-clamp-3">
-                                            {{ Str::limit($post->deskripsi, 160) }}
-                                        </p>
-                                        <p x-show="expanded" class="text-gray-700 leading-relaxed">
-                                            {{ $post->deskripsi }}
-                                        </p>
-                                        <button type="button" @click="expanded = !expanded" class="mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-semibold">
-                                            <span x-show="!expanded">Lihat selengkapnya</span>
-                                            <span x-show="expanded">Tutup</span>
-                                        </button>
-                                    </div>
-
-                                    {{-- Stats --}}
-                                    <div class="grid grid-cols-2 gap-3 md:gap-4 mb-6">
-                                        <div class="bg-gray-50 rounded-xl p-4 text-center">
-                                            <p class="text-sm text-gray-600 mb-1">Kuota</p>
-                                            <p class="text-2xl md:text-3xl font-bold text-indigo-600">
-                                                {{ $post->kuota }}
-                                            </p>
-                                        </div>
-                                        <div class="bg-gray-50 rounded-xl p-4 text-center">
-                                            <p class="text-sm text-gray-600 mb-1">Durasi</p>
-                                            <p class="text-2xl md:text-3xl font-bold text-purple-600">
-                                                {{ $post->durasi }} bulan
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {{-- Action Button --}}
-                                    <div class="mt-6">
-                                        @auth('peserta_calon')
-                                            {{-- Jika sudah login --}}
-                                            <form action="{{ route('peserta.promosi') }}" method="POST" class="w-full">
-                                                @csrf
-                                                <input type="hidden" name="postingan_id" value="{{ $post->id }}">
-                                                <button type="submit"
-                                                        class="block w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-semibold py-3 md:py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg text-center">
-                                                    Lamar Sekarang
-                                                </button>
-                                            </form>
-                                        @else
-                                            {{-- Jika belum login --}}
-                                            <button type="button" 
-                                                    onclick="showLoginModal()"
-                                                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white font-semibold py-3 md:py-4 rounded-xl hover:from-indigo-700 hover:to-purple-800 transition shadow-lg">
-                                                Daftar untuk Melamar
-                                            </button>
-                                        @endauth
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    {{-- Empty State --}}
-                    <div class="text-center py-12 md:py-20 px-4 sm:px-6 lg:px-8">
-                        <div class="inline-flex items-center justify-center w-24 h-24 md:w-32 md:h-32 bg-gray-100 rounded-full mb-6 md:mb-8">
-                            <svg class="w-12 h-12 md:w-16 md:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl md:text-2xl font-semibold text-gray-700 mb-3">
-                            Belum Ada Lowongan
-                        </h3>
-                        <p class="text-gray-500 max-w-md mx-auto">
-                            Lowongan magang akan segera dibuka. Pantau terus halaman ini!
-                        </p>
-                    </div>
-                @endif
+        @livewire('job-postings')
 
         {{-- CTA Section --}}
         <x-section-heading title="Siap Memulai Karier Profesionalmu?" subtitle="Daftar sekarang dan bergabung dalam program magang untuk mendapatkan pengalaman dunia kerja yang sesungguhnya." />
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-12 mb-12 px-4 sm:px-6 lg:px-8">
                     <a href="{{ route('peserta.register') }}"
-                       class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-md">
+                       class="bg-[#6D8ED0] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#5b78b8] transition text-center w-full sm:w-auto">
                         Daftar Sekarang
                     </a>
                     <a href="#lowongan"
-                       class="px-8 py-3 border-2 border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition">
+                       class="bg-[#6D8ED0] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#5b78b8] transition text-center w-full sm:w-auto">
                         Pelajari Lebih Lanjut
                     </a>
                 </div>
