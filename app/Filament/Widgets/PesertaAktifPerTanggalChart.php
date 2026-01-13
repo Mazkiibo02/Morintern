@@ -2,8 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Peserta;
-use Illuminate\Support\Facades\Schema;
+use App\Models\PesertaCalon;
 use Filament\Widgets\ChartWidget;
 
 class PesertaAktifPerTanggalChart extends ChartWidget
@@ -15,8 +14,8 @@ class PesertaAktifPerTanggalChart extends ChartWidget
 
     protected function getData(): array
     {
-        $rows = Peserta::query()
-            ->when(Schema::hasColumn('pesertas', 'status'), fn($q) => $q->where('status', 'peserta'))
+        $rows = PesertaCalon::query()
+            ->peserta()
             ->whereNotNull('tanggal_daftar')
             ->selectRaw('DATE(tanggal_daftar) as tanggal, COUNT(*) as jumlah')
             ->groupBy('tanggal')

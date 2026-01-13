@@ -42,7 +42,7 @@ class RegisteredPesertaController extends Controller
             'linkedin'     => '-', 
             'tanggal_mulai'    => now(),
             'tanggal_selesai'  => now(),
-            'kelompok_id'      => 0,
+            'kelompok_id'      => null,
             'cv'               => '-',
             'surat'            => '-',
         ]);

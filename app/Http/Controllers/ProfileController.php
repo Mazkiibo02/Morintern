@@ -98,6 +98,16 @@ if (isset($validated['name']) && !isset($validated['nama_lengkap'])) {
     unset($validated['name']);
 }
 
+// Map universitas_id/jurusan_id to actual columns universitas/jurusan
+if (array_key_exists('universitas_id', $validated)) {
+    $validated['universitas'] = $validated['universitas_id'];
+    unset($validated['universitas_id']);
+}
+if (array_key_exists('jurusan_id', $validated)) {
+    $validated['jurusan'] = $validated['jurusan_id'];
+    unset($validated['jurusan_id']);
+}
+
 // Ensure nama_lengkap is set
 if (empty($validated['nama_lengkap'])) {
     $validated['nama_lengkap'] = $user->nama_lengkap ?? $user->name ?? 'User';
@@ -128,17 +138,24 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             unset($validated['nama_lengkap']);
         }
 
-        // Ensure ketua has kelompok_id
-        if ($user instanceof \App\Models\PesertaCalon && empty($user->kelompok_id)) {
-            $user->kelompok_id = $user->id;
+        // Ensure ketua has a valid kelompok_id (null or existing kelompoks.id)
+        if ($user instanceof \App\Models\PesertaCalon) {
+            $incomingKelompokId = $request->input('kelompok_id', $user->kelompok_id);
+            if ($incomingKelompokId && !\Illuminate\Support\Facades\DB::table('kelompoks')->where('id', $incomingKelompokId)->exists()) {
+                $incomingKelompokId = null;
+            }
+            $user->kelompok_id = $incomingKelompokId ?: null;
             $user->save();
         }
         // Update ketua data
         $user->update($validated);
 
-        if (empty($user->kelompok_id)) {
-            $user->kelompok_id = $user->id;
-            $user->save();
+        // Keep kelompok_id null if not valid; do not force to user id
+        if ($user instanceof \App\Models\PesertaCalon && $user->kelompok_id) {
+            if (!\Illuminate\Support\Facades\DB::table('kelompoks')->where('id', $user->kelompok_id)->exists()) {
+                $user->kelompok_id = null;
+                $user->save();
+            }
         }
 
         // Handle anggota data
@@ -173,6 +190,7 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
                     PesertaCalon::create(array_merge($anggotaValidated, [
                         'ketua_id' => $user->id,
                         'kelompok_id' => $user->kelompok_id ?? null,
+                        'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(12)),
                     ]));
                 }
             }

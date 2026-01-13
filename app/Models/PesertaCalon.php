@@ -13,8 +13,8 @@ class PesertaCalon extends Model implements AuthenticatableContract
 {
     use Authenticatable,  HasFactory, Notifiable;  // Tambah Notifiable untuk email notif
 
-    // Actual table (migrations created/renamed to `pesertas`)
-    protected $table = 'pesertas';
+    // Actual table (migrations created/renamed to `peserta_calon`)
+    protected $table = 'peserta_calon';
 
     protected $fillable = [
         'nama_lengkap', 'email', 'password', 'no_telp', 'universitas_id', 'jurusan_id',
@@ -62,6 +62,22 @@ class PesertaCalon extends Model implements AuthenticatableContract
     public function getRememberTokenName()
     {
         return 'remember_token';
+    }
+
+    // Scopes
+    public function scopePendaftar($query)
+    {
+        return $query;
+    }
+
+    public function scopePeserta($query)
+    {
+        return $query->whereIn('status', ['accepted', 'diterima']);
+    }
+
+    public function scopeDitolak($query)
+    {
+        return $query->whereIn('status', ['rejected', 'ditolak']);
     }
 
     // Relasi
