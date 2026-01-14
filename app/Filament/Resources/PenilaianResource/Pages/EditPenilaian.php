@@ -5,7 +5,7 @@ namespace App\Filament\Resources\PenilaianResource\Pages;
 use App\Filament\Resources\PenilaianResource;
 use App\Filament\Resources\PenilaianResource\Schemas\PesertaForm;
 use App\Models\Penilaian;
-use App\Models\Peserta;
+use App\Models\PesertaCalon;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -42,7 +42,7 @@ class EditPenilaian extends EditRecord
     {
         $pesertaId = $this->record->peserta_id;
         if ($pesertaId) {
-            $peserta = Peserta::find($pesertaId);
+            $peserta = PesertaCalon::find($pesertaId);
             if ($peserta) {
                 return 'Edit Penilaian: ' . $peserta->nama_lengkap;
             }

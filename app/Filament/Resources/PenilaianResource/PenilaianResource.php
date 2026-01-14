@@ -9,9 +9,7 @@ use App\Filament\Resources\PenilaianResource\Pages\ViewPeserta;
 use App\Filament\Resources\PenilaianResource\Schemas\PesertaForm;
 use App\Filament\Resources\PenilaianResource\Schemas\PesertaInfolist;
 use App\Filament\Resources\PenilaianResource\Tables\PesertasTable;
-use App\Models\Peserta;
-use App\Models\Penilaian;
-use App\Models\Status;
+use App\Models\PesertaCalon;
 use App\Models\Spesialisasi;
 use BackedEnum;
 use UnitEnum;
@@ -23,7 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\SelectFilter;
 class PenilaianResource extends Resource
 {
-    protected static ?string $model = Peserta::class;
+    protected static ?string $model = PesertaCalon::class;
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-star';
 
@@ -75,12 +73,9 @@ class PenilaianResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->whereHas('status', function ($query) {
-                $query->where('nama_status', 'like', '%aktif%');
-            });
+        return parent::getEloquentQuery()->peserta();
     }
 
 }

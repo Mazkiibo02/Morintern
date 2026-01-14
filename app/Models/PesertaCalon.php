@@ -7,7 +7,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Peserta;
 
 class PesertaCalon extends Model implements AuthenticatableContract
 {
@@ -16,10 +15,16 @@ class PesertaCalon extends Model implements AuthenticatableContract
     // Actual table (migrations created/renamed to `peserta_calon`)
     protected $table = 'peserta_calon';
 
+    // Status constants
+    public const STATUS_PENDAFTAR = 'pendaftar';
+    public const STATUS_PESERTA = 'peserta';
+    public const STATUS_DITOLAK = 'ditolak';
+
     protected $fillable = [
-        'nama_lengkap', 'email', 'password', 'no_telp', 'universitas_id', 'jurusan_id',
+        'nama_lengkap', 'email', 'password', 'no_telp', 'universitas', 'jurusan',
         'spesialisasi_id', 'kelompok_id', 'ketua_id', 'tanggal_mulai', 'tanggal_selesai',
-        'cv', 'surat', 'status', 'google_id', 'remember_token'
+        'cv', 'surat', 'status', 'google_id', 'remember_token', 'github', 'linkedin',
+        'penilaian_status', 'kritik_saran', 'file_penilaian'
     ];
 
     protected $hidden = [
@@ -64,20 +69,20 @@ class PesertaCalon extends Model implements AuthenticatableContract
         return 'remember_token';
     }
 
-    // Scopes
+    // Scopes - filter by status column
     public function scopePendaftar($query)
     {
-        return $query;
+        return $query->where('status', self::STATUS_PENDAFTAR);
     }
 
     public function scopePeserta($query)
     {
-        return $query->whereIn('status', ['accepted', 'diterima']);
+        return $query->where('status', self::STATUS_PESERTA);
     }
 
     public function scopeDitolak($query)
     {
-        return $query->whereIn('status', ['rejected', 'ditolak']);
+        return $query->where('status', self::STATUS_DITOLAK);
     }
 
     // Relasi
@@ -96,6 +101,16 @@ class PesertaCalon extends Model implements AuthenticatableContract
         return $this->belongsTo(self::class, 'kelompok_id');
     }
 
+    public function penilaian()
+    {
+        return $this->hasOne(Penilaian::class, 'peserta_id');
+    }
+
+    public function penilaians()
+    {
+        return $this->hasMany(Penilaian::class, 'peserta_calon_id');
+    }
+
     protected static function booted()
     {
         static::saved(function (self $calon) {
@@ -104,44 +119,8 @@ class PesertaCalon extends Model implements AuthenticatableContract
             }
             $status = strtolower((string) $calon->status);
 
-            if (in_array($status, ['accepted', 'diterima'])) {
-                $promote = function (self $rc) {
-                    $data = [
-                        'nama_lengkap' => $rc->nama_lengkap,
-                        'email' => $rc->email,
-                        'password' => $rc->password ?: \Illuminate\Support\Str::random(16),
-                        'google_id' => $rc->google_id,
-                        'no_telp' => $rc->no_telp,
-                        'ketua_id' => $rc->ketua_id,
-                        'perusahaan_id' => $rc->perusahaan_id,
-                        'kelompok_id' => $rc->kelompok_id,
-                        'universitas' => (string) $rc->universitas_id,
-                        'jurusan' => (string) $rc->jurusan_id,
-                        'github' => $rc->github,
-                        'linkedin' => $rc->linkedin,
-                        'cv' => $rc->cv,
-                        'surat' => $rc->surat,
-                        'tanggal_daftar' => now(),
-                    ];
-                    $existing = Peserta::where('email', $rc->email)->first();
-                    $existing ? $existing->update($data) : Peserta::create($data);
-                    $rc->delete();
-                };
-
-                $promote($calon);
-
-                if ($calon->kelompok_id && ($calon->id === $calon->kelompok_id)) {
-                    $members = self::where('kelompok_id', $calon->kelompok_id)
-                        ->where('id', '!=', $calon->id)
-                        ->get();
-                    foreach ($members as $member) {
-                        $promote($member);
-                    }
-                }
-                return;
-            }
-
-            if (in_array($status, ['rejected', 'ditolak'])) {
+            // Handle rejection - update group members status
+            if ($status === 'ditolak') {
                 if ($calon->kelompok_id && ($calon->id === $calon->kelompok_id)) {
                     \Illuminate\Database\Eloquent\Model::withoutEvents(function () use ($calon) {
                         self::where('kelompok_id', $calon->kelompok_id)->update(['status' => 'ditolak']);

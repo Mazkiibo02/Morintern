@@ -27,11 +27,10 @@ class PesertaForm
                             ->content(function ($get) {
                                 $pesertaId = request()->get('peserta_id');
                                 if ($pesertaId) {
-                                    $peserta = \App\Models\Peserta::find($pesertaId);
+                                    $peserta = \App\Models\PesertaCalon::find($pesertaId);
                                     if ($peserta) {
                                         return "Nama: {$peserta->nama_lengkap}<br>
                                                 Email: {$peserta->email}<br>
-                                                Universitas: {$peserta->universitas}<br>
                                                 Spesialisasi: " . ($peserta->spesialisasi?->nama_spesialisasi ?? '-');
                                     }
                                 }
@@ -106,7 +105,6 @@ class PesertaForm
                                     $peserta = $record->peserta;
                                     return "Nama: {$peserta->nama_lengkap}<br>
                                             Email: {$peserta->email}<br>
-                                            Universitas: {$peserta->universitas}<br>
                                             Spesialisasi: " . ($peserta->spesialisasi?->nama_spesialisasi ?? '-');
                                 }
                                 return '';

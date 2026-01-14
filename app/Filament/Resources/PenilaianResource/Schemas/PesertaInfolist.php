@@ -33,14 +33,8 @@ class PesertaInfolist
                         
                         Grid::make(2)
                             ->schema([
-                                TextEntry::make('universitas')
-                                    ->label('Universitas'),
-                                
-                                TextEntry::make('jurusan')
-                                    ->label('Jurusan'),
-                                
-                                TextEntry::make('spesialis')
-                                    ->label('Spesialis'),
+                                TextEntry::make('spesialisasi.nama_spesialisasi')
+                                    ->label('Spesialisasi'),
                                 
                                 TextEntry::make('kelompok_id')
                                     ->label('Kelompok')
@@ -59,13 +53,10 @@ class PesertaInfolist
                                     ->label('Tanggal Selesai')
                                     ->date('d M Y'),
                                 
-                                TextEntry::make('status.nama_status')
+                                TextEntry::make('status')
                                     ->label('Status')
                                     ->badge()
                                     ->color('success'),
-                                
-                                TextEntry::make('spesialisasi.nama_spesialisasi')
-                                    ->label('Spesialisasi'),
                             ]),
                     ]),
                 
@@ -76,48 +67,23 @@ class PesertaInfolist
                                 TextEntry::make('penilaian_status')
                                     ->label('Status Penilaian')
                                     ->badge()
-                                    ->color(function ($record) {
-                                        return $record->penilaian ? 'success' : 'warning';
+                                    ->color(function ($state) {
+                                        return $state ? 'success' : 'warning';
                                     })
-                                    ->formatStateUsing(function ($record) {
-                                        return $record->penilaian ? 'Sudah Dinilai' : 'Belum Dinilai';
+                                    ->formatStateUsing(function ($state) {
+                                        return $state ?: 'Belum Dinilai';
                                     }),
                                     
-                                TextEntry::make('penilaian.nama')
-                                    ->label('Nama Penilai')
-                                    ->hidden(function ($record) {
-                                        return $record->penilaian === null;
-                                    }),
+                                TextEntry::make('kritik_saran')
+                                    ->label('Kritik / Saran')
+                                    ->visible(fn ($state) => !empty($state)),
                                     
-                                TextEntry::make('penilaian.nilai_rata_rata')
-                                    ->label('Nilai Rata-rata')
-                                    ->numeric(decimalPlaces: 2)
-                                    ->hidden(function ($record) {
-                                        return $record->penilaian === null;
-                                    }),
-                                    
-                                TextEntry::make('penilaian.masukan')
-                                    ->label('Masukan / Catatan')
-                                    ->hidden(function ($record) {
-                                        return $record->penilaian === null;
-                                    }),
-                                    
-                                TextEntry::make('penilaian.file_penilaian')
+                                TextEntry::make('file_penilaian')
                                     ->label('File Penilaian')
                                     ->formatStateUsing(function ($state) {
                                         return $state ? basename($state) : 'Tidak ada file';
                                     })
-                                    ->hidden(function ($record) {
-                                        return $record->penilaian === null;
-                                    }),
-                                    
-                                TextEntry::make('penilaian.created_at')
-                                    ->label('Dinilai pada')
-                                    ->dateTime('d M Y H:i')
-                                    ->timezone('Asia/Jakarta')
-                                    ->hidden(function ($record) {
-                                        return $record->penilaian === null;
-                                    }),
+                                    ->visible(fn ($state) => !empty($state)),
                             ])
                     ])
             ]);

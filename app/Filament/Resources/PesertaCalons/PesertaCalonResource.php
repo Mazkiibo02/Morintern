@@ -12,62 +12,91 @@ use Filament\Tables\Table;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class PesertaCalonResource extends Resource
 {
     protected static ?string $model = PesertaCalon::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'Peserta Calon';
+    protected static ?string $navigationLabel = 'Pendaftar';
     protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Peserta';
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nama_lengkap';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->pendaftar();
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 Forms\Components\TextInput::make('nama_lengkap')
+                    ->label('Nama Lengkap')
                     ->required()
                     ->maxLength(255),
+                    
                 Forms\Components\TextInput::make('email')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
+                    
                 Forms\Components\TextInput::make('no_telp')
+                    ->label('No. Telepon')
                     ->tel()
                     ->maxLength(20),
+                    
                 Forms\Components\Select::make('spesialisasi_id')
+                    ->label('Spesialisasi')
                     ->relationship('spesialisasi', 'nama_spesialisasi')
                     ->searchable()
                     ->preload(),
-                Forms\Components\TextInput::make('universitas_id')
+                    
+                Forms\Components\TextInput::make('universitas')
                     ->label('Universitas')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('jurusan_id')
+                    
+                Forms\Components\TextInput::make('jurusan')
                     ->label('Jurusan')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('tanggal_mulai'),
-                Forms\Components\DatePicker::make('tanggal_selesai'),
-                Forms\Components\TextInput::make('github')->url(),
-                Forms\Components\TextInput::make('linkedin')->url(),
+                    
+                Forms\Components\DatePicker::make('tanggal_mulai')
+                    ->label('Tanggal Mulai')
+                    ->native(false),
+                    
+                Forms\Components\DatePicker::make('tanggal_selesai')
+                    ->label('Tanggal Selesai')
+                    ->native(false),
+                    
+                Forms\Components\TextInput::make('github')
+                    ->label('GitHub')
+                    ->url()
+                    ->maxLength(255),
+                    
+                Forms\Components\TextInput::make('linkedin')
+                    ->label('LinkedIn')
+                    ->url()
+                    ->maxLength(255),
+                    
                 Forms\Components\FileUpload::make('cv')
+                    ->label('CV (PDF)')
                     ->directory('cv')
                     ->acceptedFileTypes(['application/pdf'])
-                    ->maxSize(5120),
+                    ->maxSize(5120)
+                    ->downloadable()
+                    ->openable(),
+                    
                 Forms\Components\FileUpload::make('surat')
+                    ->label('Surat Lamaran')
                     ->directory('surat')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
-                    ->maxSize(5120),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'pending'   => 'Pending',
-                        'diterima'  => 'Diterima',
-                        'ditolak'   => 'Ditolak',
-                    ])
-                    ->default('pending')
-                    ->required(),
+                    ->maxSize(5120)
+                    ->downloadable()
+                    ->openable(),
             ]);
     }
 
@@ -82,77 +111,124 @@ class PesertaCalonResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('no_telp'),
+                Tables\Columns\TextColumn::make('universitas')
+                    ->label('Universitas')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                    
                 Tables\Columns\TextColumn::make('spesialisasi.nama_spesialisasi')
                     ->label('Spesialisasi')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
+                    
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'pending'   => 'warning',
-                        'diterima'  => 'success',
-                        'ditolak'   => 'danger',
+                        PesertaCalon::STATUS_PENDAFTAR => 'warning',
+                        PesertaCalon::STATUS_PESERTA   => 'success',
+                        PesertaCalon::STATUS_DITOLAK   => 'danger',
                         default     => 'gray',
                     }),
+                    
                 Tables\Columns\TextColumn::make('tanggal_mulai')
-                    ->date()
-                    ->sortable(),
+                    ->label('Tanggal Mulai')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Terdaftar Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'pending'   => 'Pending',
-                        'diterima'  => 'Diterima',
-                        'ditolak'   => 'Ditolak',
-                    ]),
+                // No status filter needed since we only show 'pendaftar' status
             ])
             ->actions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
-                Actions\Action::make('penilaian')
-                    ->label('Beri Penilaian')
-                    ->icon('heroicon-o-star')
-                    ->color('warning')
-                    ->form([
-                        Forms\Components\Textarea::make('kritik_saran')
-                            ->label('Kritik & Saran')
-                            ->rows(5),
-                        Forms\Components\FileUpload::make('file_penilaian')
-                            ->label('File Penilaian')
-                            ->directory('penilaian')
-                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                            ->maxSize(10240),
-                    ])
-                    ->action(function (PesertaCalon $record, array $data) {
-                        $record->update([
-                            'kritik_saran' => $data['kritik_saran'],
-                            'file_penilaian' => $data['file_penilaian'] ?? $record->file_penilaian,
-                        ]);
-
-                        Notification::make()
-                            ->success()
-                            ->title('Penilaian berhasil disimpan!')
-                            ->send();
-                    })
-                    ->visible(fn ($record) => $record->status === 'diterima'),
-            ])
-            ->bulkActions([
-                Actions\DeleteBulkAction::make(),
-                Actions\BulkAction::make('terima')
-                    ->label('Terima sebagai Peserta Aktif')
+                Actions\Action::make('terima')
+                    ->label('Terima')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->action(fn (Collection $records) => $records->each->update(['status' => 'diterima']))
-                    ->after(fn () => Notification::make()->success()->title('Peserta diterima!')->send()),
-                Actions\BulkAction::make('tolak')
+                    ->modalHeading('Terima sebagai Peserta Aktif?')
+                    ->modalDescription('Apakah Anda yakin ingin menerima pendaftar ini sebagai peserta aktif?')
+                    ->action(function (PesertaCalon $record) {
+                        $record->update(['status' => PesertaCalon::STATUS_PESERTA]);
+                        
+                        Notification::make()
+                            ->success()
+                            ->title('Peserta diterima!')
+                            ->body($record->nama_lengkap . ' berhasil diterima sebagai peserta aktif.')
+                            ->send();
+                    })
+                    ->visible(fn ($record) => $record->status === PesertaCalon::STATUS_PENDAFTAR),
+                    
+                Actions\Action::make('tolak')
                     ->label('Tolak')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->action(fn (Collection $records) => $records->each->update(['status' => 'ditolak']))
-                    ->after(fn () => Notification::make()->success()->title('Peserta ditolak.')->send()),
+                    ->modalHeading('Tolak Pendaftar?')
+                    ->modalDescription('Apakah Anda yakin ingin menolak pendaftar ini?')
+                    ->action(function (PesertaCalon $record) {
+                        $record->update(['status' => PesertaCalon::STATUS_DITOLAK]);
+                        
+                        Notification::make()
+                            ->warning()
+                            ->title('Pendaftar ditolak')
+                            ->body($record->nama_lengkap . ' telah ditolak.')
+                            ->send();
+                    })
+                    ->visible(fn ($record) => $record->status === PesertaCalon::STATUS_PENDAFTAR),
+            ])
+            ->bulkActions([
+                Actions\BulkAction::make('terima_bulk')
+                    ->label('Terima sebagai Peserta Aktif')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Terima Pendaftar Terpilih?')
+                    ->modalDescription('Apakah Anda yakin ingin menerima semua pendaftar yang dipilih?')
+                    ->action(function (Collection $records) {
+                        $count = $records->count();
+                        $records->each->update(['status' => PesertaCalon::STATUS_PESERTA]);
+                        
+                        Notification::make()
+                            ->success()
+                            ->title('Berhasil!')
+                            ->body("{$count} pendaftar berhasil diterima sebagai peserta aktif.")
+                            ->send();
+                    }),
+                    
+                Actions\BulkAction::make('tolak_bulk')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Tolak Pendaftar Terpilih?')
+                    ->modalDescription('Apakah Anda yakin ingin menolak semua pendaftar yang dipilih?')
+                    ->action(function (Collection $records) {
+                        $count = $records->count();
+                        $records->each->update(['status' => PesertaCalon::STATUS_DITOLAK]);
+                        
+                        Notification::make()
+                            ->warning()
+                            ->title('Berhasil!')
+                            ->body("{$count} pendaftar ditolak.")
+                            ->send();
+                    }),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            PenilaiansRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

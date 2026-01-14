@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PenilaianResource\Pages;
 
 use App\Filament\Resources\PenilaianResource;
+use App\Models\PesertaCalon;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,17 +42,17 @@ class ListPenilaians extends ListRecords
                 
             'belum_dinilai' => Tab::make('Belum Dinilai')
                 ->icon('heroicon-o-exclamation-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->doesntHave('penilaian'))
-                ->badge(fn () => \App\Models\Peserta::query()
-                    ->doesntHave('penilaian')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNull('penilaian_status'))
+                ->badge(fn () => PesertaCalon::peserta()
+                    ->whereNull('penilaian_status')
                     ->count())
                 ->badgeColor('warning'),
                 
             'sudah_dinilai' => Tab::make('Sudah Dinilai')
                 ->icon('heroicon-o-check-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->has('penilaian'))
-                ->badge(fn () => \App\Models\Peserta::query()
-                    ->has('penilaian')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNotNull('penilaian_status'))
+                ->badge(fn () => PesertaCalon::peserta()
+                    ->whereNotNull('penilaian_status')
                     ->count())
                 ->badgeColor('success'),
         ];

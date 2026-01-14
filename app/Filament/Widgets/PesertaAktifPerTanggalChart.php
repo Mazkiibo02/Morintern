@@ -16,8 +16,8 @@ class PesertaAktifPerTanggalChart extends ChartWidget
     {
         $rows = PesertaCalon::query()
             ->peserta()
-            ->whereNotNull('tanggal_daftar')
-            ->selectRaw('DATE(tanggal_daftar) as tanggal, COUNT(*) as jumlah')
+            ->whereNotNull('created_at')
+            ->selectRaw('DATE(created_at) as tanggal, COUNT(*) as jumlah')
             ->groupBy('tanggal')
             ->orderBy('tanggal')
             ->limit(30)
@@ -29,7 +29,7 @@ class PesertaAktifPerTanggalChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Peserta Aktif per Tanggal (tanggal_daftar)',
+                    'label' => 'Peserta Aktif per Tanggal',
                     'data' => $data,
                     'borderColor' => '#22C55E',
                     'backgroundColor' => 'rgba(34, 197, 94, 0.2)',

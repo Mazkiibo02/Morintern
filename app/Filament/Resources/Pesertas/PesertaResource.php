@@ -3,13 +3,15 @@
 namespace App\Filament\Resources\Pesertas;
 
 use App\Filament\Resources\Pesertas\Pages\ManagePesertas;
-use App\Models\Peserta;
+use App\Models\PesertaCalon;
+use App\Models\Spesialisasi;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -18,57 +20,85 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PesertaResource extends Resource
 {
-    protected static ?string $model = Peserta::class;
+    protected static ?string $model = PesertaCalon::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    protected static ?string $navigationLabel = 'Peserta';
+    protected static ?string $navigationLabel = 'Peserta Aktif';
     protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Peserta';
     protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'nama_lengkap';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->peserta();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
+                TextInput::make('nama_lengkap')
+                    ->label('Nama Lengkap')
+                    ->required()
+                    ->maxLength(255),
+                    
+                TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                    
+                TextInput::make('no_telp')
+                    ->label('No. Telepon')
+                    ->tel()
+                    ->maxLength(20),
+                    
+                Select::make('spesialisasi_id')
+                    ->label('Spesialisasi')
+                    ->relationship('spesialisasi', 'nama_spesialisasi')
+                    ->searchable()
+                    ->preload(),
+                    
+                TextInput::make('kelompok_id')
+                    ->label('Kelompok ID')
+                    ->numeric(),
+                    
+                DatePicker::make('tanggal_mulai')
+                    ->label('Tanggal Mulai')
+                    ->native(false),
+                    
+                DatePicker::make('tanggal_selesai')
+                    ->label('Tanggal Selesai')
+                    ->native(false)
+                    ->after('tanggal_mulai'),
+                    
                 Select::make('status')
-                    ->options(['peserta' => 'Peserta', 'selesai' => 'Selesai', 'dropout' => 'Dropout'])
+                    ->label('Status')
+                    ->options([
+                        'peserta' => 'Peserta',
+                        'pendaftar' => 'Pendaftar',
+                        'ditolak' => 'Ditolak',
+                    ])
                     ->default('peserta')
                     ->required(),
-                TextInput::make('nama_lengkap')
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                TextInput::make('password')
-                    ->password()
-                    ->required(),
-                TextInput::make('google_id'),
-                TextInput::make('no_telp')
-                    ->tel(),
-                TextInput::make('ketua_id')
-                    ->numeric(),
-                TextInput::make('perusahaan_id')
-                    ->numeric(),
-                DateTimePicker::make('tanggal_daftar'),
-                TextInput::make('status_id')
-                    ->numeric(),
-                TextInput::make('kelompok_id')
-                    ->numeric(),
-                TextInput::make('universitas'),
-                TextInput::make('jurusan'),
-                DateTimePicker::make('email_verified_at'),
-                TextInput::make('github'),
-                TextInput::make('linkedin'),
-                TextInput::make('cv'),
-                TextInput::make('surat'),
+                    
+                Select::make('penilaian_status')
+                    ->label('Status Penilaian')
+                    ->options([
+                        'Lulus' => 'Lulus',
+                        'Tidak Lulus' => 'Tidak Lulus',
+                        'Dalam Evaluasi' => 'Dalam Evaluasi',
+                    ]),
+                    
                 Textarea::make('kritik_saran')
+                    ->label('Kritik / Saran')
+                    ->rows(4)
                     ->columnSpanFull(),
-                TextInput::make('file_penilaian'),
             ]);
     }
 
@@ -77,62 +107,72 @@ class PesertaResource extends Resource
         return $table
             ->recordTitleAttribute('nama_lengkap')
             ->columns([
-                TextColumn::make('status')
-                    ->badge(),
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
+                    
                 TextColumn::make('nama_lengkap')
-                    ->searchable(),
+                    ->label('Nama Lengkap')
+                    ->searchable()
+                    ->sortable(),
+                    
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('google_id')
-                    ->searchable(),
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+                    
                 TextColumn::make('no_telp')
+                    ->label('No. Telepon')
                     ->searchable(),
-                TextColumn::make('ketua_id')
-                    ->numeric()
-                    ->sortable()
+                    
+                TextColumn::make('spesialisasi.nama_spesialisasi')
+                    ->label('Spesialisasi')
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('perusahaan_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('tanggal_daftar')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('status_id')
-                    ->numeric()
-                    ->sortable(),
+                    
                 TextColumn::make('kelompok_id')
-                    ->numeric()
+                    ->label('Kelompok')
+                    ->formatStateUsing(function ($state) {
+                        return $state ? 'Kelompok ' . $state : '-';
+                    })
                     ->sortable(),
-                TextColumn::make('universitas')
-                    ->searchable(),
-                TextColumn::make('jurusan')
-                    ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
+                    
+                TextColumn::make('tanggal_mulai')
+                    ->label('Tanggal Mulai')
+                    ->date('d M Y')
                     ->sortable(),
-                TextColumn::make('github')
-                    ->searchable(),
-                TextColumn::make('linkedin')
-                    ->searchable(),
-                TextColumn::make('cv')
-                    ->searchable(),
-                TextColumn::make('surat')
-                    ->searchable(),
+                    
+                TextColumn::make('tanggal_selesai')
+                    ->label('Tanggal Selesai')
+                    ->date('d M Y')
+                    ->sortable(),
+                    
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color('success'),
+                    
+                TextColumn::make('penilaian_status')
+                    ->label('Status Penilaian')
+                    ->badge()
+                    ->color(function ($state) {
+                        return $state ? 'success' : 'warning';
+                    })
+                    ->formatStateUsing(function ($state) {
+                        return $state ?: 'Belum Dinilai';
+                    }),
+                    
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Terdaftar Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('file_penilaian')
-                    ->searchable(),
             ])
             ->filters([
                 //
@@ -145,7 +185,8 @@ class PesertaResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getPages(): array

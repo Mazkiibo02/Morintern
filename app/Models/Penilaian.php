@@ -10,31 +10,25 @@ class Penilaian extends Model
     protected $table = 'penilaians';
 
     protected $fillable = [
-        'peserta_id',
-        'user_id',
-        'nama',
-        'nilai_rata_rata',
-        'masukan',
-        'file_penilaian',
-    ];
-
-    protected $casts = [
-        'nilai_rata_rata' => 'decimal:2',
+        'peserta_calon_id',
+        'kritik_saran',
+        'file_path',
+        'created_by',
     ];
 
     /**
-     * Relasi ke Peserta (active intern)
+     * Relasi ke PesertaCalon
      */
-    public function peserta(): BelongsTo
+    public function pesertaCalon(): BelongsTo
     {
-        return $this->belongsTo(Peserta::class);
+        return $this->belongsTo(PesertaCalon::class, 'peserta_calon_id');
     }
 
     /**
-     * Relasi ke User (mentor/admin)
+     * Relasi ke User sebagai creator
      */
-    public function user(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

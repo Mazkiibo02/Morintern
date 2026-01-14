@@ -5,7 +5,7 @@ namespace App\Filament\Resources\PenilaianResource\Pages;
 use App\Filament\Resources\PenilaianResource;
 use App\Filament\Resources\PenilaianResource\Schemas\PesertaForm;
 use App\Models\Penilaian;
-use App\Models\Peserta;
+use App\Models\PesertaCalon;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +40,7 @@ class CreatePenilaian extends CreateRecord
     {
         $pesertaId = request()->get('peserta_id');
         if ($pesertaId) {
-            $peserta = Peserta::find($pesertaId);
+            $peserta = PesertaCalon::find($pesertaId);
             if ($peserta) {
                 return 'Beri Penilaian: ' . $peserta->nama_lengkap;
             }
