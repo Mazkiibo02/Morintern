@@ -42,7 +42,7 @@ class PesertasTable
                         return $state ? 'success' : 'warning';
                     })
                     ->formatStateUsing(function ($state) {
-                        return $state ?: 'Belum Dinilai';
+                        return $state ? \App\Models\PesertaCalon::getPenilaianStatusLabelFor($state) : 'Belum Dinilai';
                     })
                     ->searchable(false),
                     

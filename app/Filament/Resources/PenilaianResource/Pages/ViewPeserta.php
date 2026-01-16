@@ -73,7 +73,7 @@ class ViewPeserta extends EditRecord
                             ->content(function () {
                                 $record = $this->getRecord();
                                 if ($record->penilaian_status) {
-                                    return "Status penilaian saat ini: " . $record->penilaian_status;
+                                    return "Status penilaian saat ini: " . \App\Models\PesertaCalon::getPenilaianStatusLabelFor($record->penilaian_status);
                                 }
                                 return 'Peserta ini belum memiliki penilaian.';
                             })
@@ -82,9 +82,9 @@ class ViewPeserta extends EditRecord
                         Select::make('penilaian_status')
                             ->label('Status Penilaian')
                             ->options([
-                                'Lulus' => 'Lulus',
-                                'Tidak Lulus' => 'Tidak Lulus',
-                                'Dalam Evaluasi' => 'Dalam Evaluasi',
+                                \App\Models\PesertaCalon::PENILAIAN_PENDING => 'Dalam Evaluasi',
+                                \App\Models\PesertaCalon::PENILAIAN_LULUS => 'Lulus',
+                                \App\Models\PesertaCalon::PENILAIAN_TIDAK_LULUS => 'Tidak Lulus',
                             ])
                             ->required(),
                             

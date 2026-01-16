@@ -13,7 +13,7 @@ class PostinganMagangForm
     {
         return $schema
             ->components([
-                TextInput::make('judul_posisi')
+                TextInput::make('judul')
                     ->required(),
                 Textarea::make('deskripsi')
                     ->required()

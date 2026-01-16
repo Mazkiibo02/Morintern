@@ -37,7 +37,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['name' => 'confirm-user-deletion','show' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->userDeletion->isNotEmpty()),'focusable' => true]); ?>
-        <form method="post" action="<?php echo e(Auth::guard('peserta')->check() ? route('peserta.profil.destroy') : route('profile.destroy')); ?>" class="p-6">
+        <form method="post" action="<?php echo e(Auth::guard('peserta_calon')->check() ? route('peserta.profil.destroy') : route('profile.destroy')); ?>" class="p-6">
             <?php echo csrf_field(); ?>
             <?php echo method_field('delete'); ?>
 

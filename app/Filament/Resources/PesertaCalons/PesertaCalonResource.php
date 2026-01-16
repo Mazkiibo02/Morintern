@@ -97,6 +97,36 @@ class PesertaCalonResource extends Resource
                     ->maxSize(5120)
                     ->downloadable()
                     ->openable(),
+
+                Forms\Components\Select::make('penilaian_status')
+                    ->label('Status Penilaian')
+                    ->options([
+                        PesertaCalon::PENILAIAN_PENDING => 'Dalam Evaluasi',
+                        PesertaCalon::PENILAIAN_LULUS => 'Lulus',
+                        PesertaCalon::PENILAIAN_TIDAK_LULUS => 'Tidak Lulus',
+                    ])
+                    ->nullable(),
+
+                Forms\Components\Textarea::make('kritik_saran')
+                    ->label('Kritik & Saran')
+                    ->nullable(),
+
+                Forms\Components\FileUpload::make('file_penilaian')
+                    ->label('File Penilaian')
+                    ->directory('penilaian')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(10240)
+                    ->downloadable()
+                    ->openable(),
+
+                Forms\Components\Select::make('dinilai_oleh')
+                    ->label('Dinilai Oleh')
+                    ->relationship('dinilaiOleh', 'name')
+                    ->nullable(),
+
+                Forms\Components\DateTimePicker::make('dinilai_pada')
+                    ->label('Dinilai Pada')
+                    ->nullable(),
             ]);
     }
 

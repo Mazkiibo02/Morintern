@@ -8,7 +8,7 @@ class PostinganMagang extends Model
 {
     protected $table = 'postingan_magangs';
 
-    protected $fillable = ['judul_posisi', 'deskripsi', 'kuota', 'durasi', 'spesialisasi_id'];
+    protected $fillable = ['judul', 'deskripsi', 'kuota', 'durasi', 'spesialisasi_id'];
 
     public function spesialisasi()
     {

@@ -20,11 +20,27 @@ class PesertaCalon extends Model implements AuthenticatableContract
     public const STATUS_PESERTA = 'peserta';
     public const STATUS_DITOLAK = 'ditolak';
 
+    // Penilaian status constants
+    public const PENILAIAN_PENDING = 'pending';
+    public const PENILAIAN_LULUS = 'lulus';
+    public const PENILAIAN_TIDAK_LULUS = 'tidak_lulus';
+
+    // Get label for penilaian status
+    public static function getPenilaianStatusLabelFor($status)
+    {
+        return match($status) {
+            self::PENILAIAN_PENDING => 'Dalam Evaluasi',
+            self::PENILAIAN_LULUS => 'Lulus',
+            self::PENILAIAN_TIDAK_LULUS => 'Tidak Lulus',
+            default => null,
+        };
+    }
+
     protected $fillable = [
         'nama_lengkap', 'email', 'password', 'no_telp', 'universitas', 'jurusan',
         'spesialisasi_id', 'kelompok_id', 'ketua_id', 'tanggal_mulai', 'tanggal_selesai',
         'cv', 'surat', 'status', 'google_id', 'remember_token', 'github', 'linkedin',
-        'penilaian_status', 'kritik_saran', 'file_penilaian'
+        'penilaian_status', 'kritik_saran', 'file_penilaian', 'dinilai_oleh', 'dinilai_pada'
     ];
 
     protected $hidden = [
@@ -36,6 +52,7 @@ class PesertaCalon extends Model implements AuthenticatableContract
         'password' => 'hashed',
         'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
+        'dinilai_pada' => 'datetime',
     ];
 
     // Method wajib dari Authenticatable contract
@@ -109,6 +126,11 @@ class PesertaCalon extends Model implements AuthenticatableContract
     public function penilaians()
     {
         return $this->hasMany(Penilaian::class, 'peserta_calon_id');
+    }
+
+    public function dinilaiOleh()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'dinilai_oleh');
     }
 
     protected static function booted()

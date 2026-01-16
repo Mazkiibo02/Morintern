@@ -54,7 +54,7 @@ Route::middleware('auth:peserta_calon')->group(function () {
     Route::match(['post', 'patch'], '/peserta/profil', [\App\Http\Controllers\ProfileController::class, 'update'])
         ->name('peserta.profil.update');
 
-    Route::delete('/peserta/profil', [\App\Http\Controllers\ProfileController::class, 'destroy'])
+    Route::delete('/peserta/profil', [App\Http\Controllers\DeleteAccountController::class, '__invoke'])
         ->name('peserta.profil.destroy');
 
     // Anggota endpoints under peserta/profil/anggota

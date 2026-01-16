@@ -90,9 +90,9 @@ class PesertaResource extends Resource
                 Select::make('penilaian_status')
                     ->label('Status Penilaian')
                     ->options([
-                        'Lulus' => 'Lulus',
-                        'Tidak Lulus' => 'Tidak Lulus',
-                        'Dalam Evaluasi' => 'Dalam Evaluasi',
+                        PesertaCalon::PENILAIAN_PENDING => 'Dalam Evaluasi',
+                        PesertaCalon::PENILAIAN_LULUS => 'Lulus',
+                        PesertaCalon::PENILAIAN_TIDAK_LULUS => 'Tidak Lulus',
                     ]),
                     
                 Textarea::make('kritik_saran')
@@ -160,7 +160,7 @@ class PesertaResource extends Resource
                         return $state ? 'success' : 'warning';
                     })
                     ->formatStateUsing(function ($state) {
-                        return $state ?: 'Belum Dinilai';
+                        return $state ? PesertaCalon::getPenilaianStatusLabelFor($state) : 'Belum Dinilai';
                     }),
                     
                 TextColumn::make('created_at')

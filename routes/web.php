@@ -26,7 +26,7 @@ Route::middleware(\App\Http\Middleware\AuthAny::class)->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::match(['post', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile', [App\Http\Controllers\DeleteAccountController::class, '__invoke'])->name('profile.destroy');
 
     // Secure file downloads (signed URLs)
     Route::middleware('signed')->group(function () {
