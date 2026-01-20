@@ -341,54 +341,41 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
      */
     public function getPenilaian(Request $request): JsonResponse
     {
-        $user = $this->getAuthenticatedUser();
+        $peserta = Auth::guard('peserta_calon')->user();
 
-        if (!$user) {
+        if (!$peserta) {
             return response()->json([
                 'success' => false,
                 'message' => 'User tidak terautentikasi.',
             ], 401);
         }
 
-        // Try to match by full name first, fallback to contains
-        $name = $user->nama_lengkap ?? $user->nama ?? null;
+        $penilaian = $peserta->penilaian;
 
-        if (!$name) {
+        if (!$penilaian) {
             return response()->json([
                 'success' => true,
                 'data' => [],
+                'message' => 'Belum ada penilaian',
             ]);
         }
 
-        $records = Penilaian::where('nama', $name)->get();
-
-        if ($records->isEmpty()) {
-            $records = Penilaian::where('nama', 'like', "%{$name}%")->get();
+        $fileUrl = null;
+        if ($penilaian->file_path) {
+            if (Storage::disk('public')->exists($penilaian->file_path)) {
+                $fileUrl = Storage::disk('public')->url($penilaian->file_path);
+            } else {
+                $fileUrl = asset('storage/' . ltrim($penilaian->file_path, '/'));
+            }
         }
 
-        // Map records to include accessible file URL when present
-        $data = $records->map(function ($r) {
-            $fileUrl = null;
-            if ($r->file_penilaian) {
-                // Prefer public disk URL if exists
-                if (Storage::disk('public')->exists($r->file_penilaian)) {
-                    $fileUrl = Storage::disk('public')->url($r->file_penilaian);
-                } else {
-                    // fallback: try asset path
-                    $fileUrl = asset('storage/' . ltrim($r->file_penilaian, '/'));
-                }
-            }
-
-            return [
-                'id' => $r->id,
-                'nama' => $r->nama,
-                'nilai_rata_rata' => $r->nilai_rata_rata,
-                'masukan' => $r->masukan,
-                'file_penilaian' => $r->file_penilaian,
-                'file_url' => $fileUrl,
-                'created_at' => $r->created_at?->toDateTimeString(),
-            ];
-        });
+        $data = [
+            'id' => $penilaian->id,
+            'kritik_saran' => $penilaian->kritik_saran,
+            'file_path' => $penilaian->file_path,
+            'file_url' => $fileUrl,
+            'created_at' => $penilaian->created_at?->toDateTimeString(),
+        ];
 
         return response()->json([
             'success' => true,

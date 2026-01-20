@@ -120,7 +120,7 @@ class PesertaCalon extends Model implements AuthenticatableContract
 
     public function penilaian()
     {
-        return $this->hasOne(Penilaian::class, 'peserta_id');
+        return $this->hasOne(Penilaian::class, 'peserta_calon_id');
     }
 
     public function penilaians()
