@@ -147,6 +147,13 @@ if ($validated['email'] !== $user->email && !$user instanceof PesertaCalon) {
             $user->kelompok_id = $incomingKelompokId ?: null;
             $user->save();
         }
+        // Safeguard: if spesialisasi_id is provided but no longer exists, set it to null
+        if (array_key_exists('spesialisasi_id', $validated) && $validated['spesialisasi_id']) {
+            if (!Spesialisasi::where('id', $validated['spesialisasi_id'])->exists()) {
+                $validated['spesialisasi_id'] = null;
+            }
+        }
+
         // Update ketua data
         $user->update($validated);
 

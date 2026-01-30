@@ -28,6 +28,8 @@ class PesertaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static ?string $navigationLabel = 'Peserta Aktif';
+    protected static ?string $modelLabel = 'Peserta Aktif';
+    protected static ?string $pluralModelLabel = 'Peserta Aktif';
     protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Peserta';
     protected static ?int $navigationSort = 2;
 

@@ -10,6 +10,11 @@ class ManagePesertas extends ManageRecords
 {
     protected static string $resource = PesertaResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Peserta Aktif';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

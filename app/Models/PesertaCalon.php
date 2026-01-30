@@ -55,7 +55,6 @@ class PesertaCalon extends Model implements AuthenticatableContract
         'dinilai_pada' => 'datetime',
     ];
 
-    // Method wajib dari Authenticatable contract
     public function getAuthIdentifierName()
     {
         return 'id';
